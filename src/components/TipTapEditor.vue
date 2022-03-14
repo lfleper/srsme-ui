@@ -13,25 +13,40 @@ import StarterKit from '@tiptap/starter-kit'
   },
 })
 export default class Home extends Vue {
+  private socket: WebSocket = new WebSocket('ws://localhost:8080/steps')
   private editor = useEditor({
     content: "",
     extensions: [StarterKit],
     autofocus: true,
-    onUpdate(e: EditorEvents["update"]) {
-      //console.log("update")
-      //console.log(JSON.stringify(e.editor.getJSON()))
-      //console.log(JSON.stringify(e.transaction.steps))
-
-    },
+    onUpdate: this.onInputChanged,
     onSelectionUpdate(e: EditorEvents["selectionUpdate"]) {
-      //console.log("selection update")
-      console.log(JSON.stringify(e.transaction.steps))
+      //console.log(JSON.stringify(e.transaction.steps))
     }
   }) 
 
+  mounted(): void {
+    this.socket.onmessage = this.onMessageSocket
+    this.socket.onclose = this.onCloseSocket
+  }
 
   beforeUnmount(): void {
     this.editor.value?.destroy()
+  }
+
+  onNewInputReceived(data: string): void {
+    console.log(data)
+  }
+
+  onMessageSocket(this: WebSocket, ev: MessageEvent<string>): void {
+    console.log(ev.data)
+  }
+
+  onCloseSocket(): void {
+    this.socket.close
+  }
+
+  onInputChanged(e: EditorEvents["selectionUpdate"]): void {
+    this.socket.send(JSON.stringify(e.transaction.steps))
   }
 }
 </script>
