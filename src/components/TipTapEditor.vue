@@ -1,52 +1,33 @@
 <template>
-    <editor-content :editor="editor"></editor-content>
+  <editor-content :editor="editor"></editor-content>
 </template>
 
-<script lang="ts">
-import { Options, Vue } from 'vue-class-component'
-import { EditorContent, useEditor, EditorEvents } from '@tiptap/vue-3'
+<script setup lang="ts">
+import { EditorContent, useEditor, EditorEvents, Editor } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
+import { onMounted, onUnmounted, ShallowRef } from 'vue'
 
-@Options({
-  components: {
-    EditorContent
+let socket: WebSocket
+let editor: ShallowRef<Editor | undefined> = useEditor({
+  content: "",
+  extensions: [StarterKit],
+  autofocus: true,
+  onUpdate: (e: EditorEvents['update']) => {
+    socket.send(JSON.stringify(e.transaction.steps))
   },
+  onSelectionUpdate(e: EditorEvents["selectionUpdate"]) {
+    console.log(e)
+    //console.log(JSON.stringify(e.transaction.steps))
+  }
 })
-export default class Home extends Vue {
-  private socket: WebSocket = new WebSocket('ws://localhost:8080/steps')
-  private editor = useEditor({
-    content: "",
-    extensions: [StarterKit],
-    autofocus: true,
-    onUpdate: this.onInputChanged,
-    onSelectionUpdate(e: EditorEvents["selectionUpdate"]) {
-      //console.log(JSON.stringify(e.transaction.steps))
-    }
-  }) 
 
-  mounted(): void {
-    this.socket.onmessage = this.onMessageSocket
-    this.socket.onclose = this.onCloseSocket
-  }
-
-  beforeUnmount(): void {
-    this.editor.value?.destroy()
-  }
-
-  onNewInputReceived(data: string): void {
-    console.log(data)
-  }
-
-  onMessageSocket(this: WebSocket, ev: MessageEvent<string>): void {
-    console.log(ev.data)
-  }
-
-  onCloseSocket(): void {
-    this.socket.close
-  }
-
-  onInputChanged(e: EditorEvents["selectionUpdate"]): void {
-    this.socket.send(JSON.stringify(e.transaction.steps))
-  }
-}
+onMounted(() => {
+  socket = new WebSocket('ws://localhost:8080/steps')
+  socket.onopen = () => console.log('socket connected')
+  socket.onmessage = (data) => console.log('message:', data)
+})
+onUnmounted(() => {
+  editor.value?.destroy()
+  socket.close()
+})
 </script>
