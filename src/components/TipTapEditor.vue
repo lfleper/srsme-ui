@@ -24,16 +24,19 @@
 <script setup lang="ts">
 import { EditorContent, useEditor, EditorEvents, Editor } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
+import SockJS from 'sockjs-client'
+import Stomp, { Client } from 'webstomp-client'
 import { onMounted, onUnmounted, ShallowRef } from 'vue'
 import { ElRow, ElCol, ElButtonGroup, ElButton } from 'element-plus'
 
 let socket: WebSocket
+let stompClient: Client 
 let editor: ShallowRef<Editor | undefined> = useEditor({
   content: "bla",
   extensions: [StarterKit],
   autofocus: 'start',
   onUpdate: (e: EditorEvents['update']) => {
-    socket.send(JSON.stringify(e.transaction.steps))
+    stompClient.send('/srs/collab', JSON.stringify(e.transaction.steps))
   },
   onSelectionUpdate(e: EditorEvents["selectionUpdate"]) {
     console.log(e)
@@ -42,12 +45,23 @@ let editor: ShallowRef<Editor | undefined> = useEditor({
 })
 
 onMounted(() => {
-  socket = new WebSocket('ws://localhost:8080/steps')
-  socket.onopen = () => console.log('socket connected')
-  socket.onmessage = (data) => console.log('message:', data)
+  socket = new SockJS('http://localhost:8080/srs')
+  stompClient = Stomp.over(socket)
+  stompClient.connect(
+    {},
+    frame => {
+      console.log('frame:', frame)
+      stompClient.subscribe('/collab/reply', editorInput => {
+        console.log(editorInput)
+      })
+    }
+  )
 })
 onUnmounted(() => {
   editor.value?.destroy()
+  if (stompClient) {
+    stompClient.disconnect()
+  }
   socket.close()
 })
 </script>
