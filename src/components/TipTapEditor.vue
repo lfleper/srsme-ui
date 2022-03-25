@@ -23,17 +23,28 @@
 
 <script setup lang="ts">
 import { EditorContent, useEditor, EditorEvents, Editor } from '@tiptap/vue-3'
+import { Collaboration } from '@tiptap/extension-collaboration'
+import { Step } from 'prosemirror-transform'
 import StarterKit from '@tiptap/starter-kit'
 import SockJS from 'sockjs-client'
-import Stomp, { Client } from 'webstomp-client'
-import { onMounted, onUnmounted, ShallowRef } from 'vue'
+import Stomp, { Client, Message } from 'webstomp-client'
+import * as Y from 'yjs'
+import { onMounted, onUnmounted, provide } from 'vue'
 import { ElRow, ElCol, ElButtonGroup, ElButton } from 'element-plus'
 
-let socket: WebSocket
+const ydoc: Y.Doc = new Y.Doc()
+let socket: WebSocket 
 let stompClient: Client 
-let editor: ShallowRef<Editor | undefined> = useEditor({
+let editor: Editor | undefined = new Editor({
   content: "bla",
-  extensions: [StarterKit],
+  extensions: [
+    StarterKit.configure({
+      history: false
+    }),
+    Collaboration.configure({
+      document: ydoc,
+    })
+  ],
   autofocus: 'start',
   onUpdate: (e: EditorEvents['update']) => {
     stompClient.send('/srs/collab', JSON.stringify(e.transaction.steps))
@@ -51,14 +62,19 @@ onMounted(() => {
     {},
     frame => {
       console.log('frame:', frame)
-      stompClient.subscribe('/collab/reply', editorInput => {
+      stompClient.subscribe('/collab/reply', (message: Message) => {
+        const editorInput: Array<Step<any>> = JSON.parse(message.body)
+
+        //editor?.chain().insertContent("hallo").run()
+
         console.log(editorInput)
       })
     }
   )
 })
+
 onUnmounted(() => {
-  editor.value?.destroy()
+  editor?.destroy()
   if (stompClient) {
     stompClient.disconnect()
   }
