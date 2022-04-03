@@ -3,14 +3,19 @@
         <el-header>
             <el-menu
                 mode="horizontal"
+                :router="false"
             >
-                <el-menu-item index="0">
+                <el-menu-item index="1">
                     <template #title>
                         <a class="title">SRSME</a>
                     </template>
                 </el-menu-item>
-                <el-menu-item class="dock-right">
-                    <el-button type="primary">
+
+                <el-menu-item index="2" class="dock-right">
+                    <el-button @click="signIn">
+                        SignIn
+                    </el-button>
+                    <el-button @click="login" type="primary">
                         Login
                     </el-button>
                 </el-menu-item>
@@ -77,6 +82,7 @@
 </template>
 
 <script setup lang="ts">
+import router from '@/router';
 import { 
     ElContainer, 
     ElHeader,
@@ -90,11 +96,17 @@ import {
     ElResult
 } from 'element-plus'
 
+const login = () => {
+    router.push('/login')
+}
+const signIn = () => {
+    router.push('/register')
+}
+
+
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates&family=Red+Hat+Mono:wght@300;600&display=swap');
-
 .main-container {
     background: white;
 }
@@ -119,14 +131,18 @@ import {
     /* min * (max - min) * (100vw - min-screen-size) / (max-screen-size - mix-screen-size) */
     font-size: calc(14px + (20 - 14) * (100vw - 300px) / (1200 - 300));
     font-family: 'Red Hat Mono', monospace;
+    font-weight: 300;
 }
 .el-menu-item.dock-right {
+    margin: auto 0;
     margin-left: auto;
-    margin-top: auto;
-    margin-bottom: auto;
 }
 .el-menu--horizontal > .el-menu-item.is-active {
     border-bottom: none;
+}
+.el-menu--horizontal .el-menu-item:not(.is-disabled):focus, 
+.el-menu--horizontal .el-menu-item:not(.is-disabled):hover {
+    background-color: transparent;
 }
 .el-main, .el-footer {
     margin: 0;
@@ -152,6 +168,7 @@ import {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+    font-family: 'Montserrat Alternates', sans-serif;
 }
 .el-result {
     font-family: 'Montserrat Alternates', sans-serif;
