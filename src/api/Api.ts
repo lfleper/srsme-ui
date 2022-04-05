@@ -25,7 +25,12 @@ export default async function fetcher<TResult>(method: string, url: string, data
     try {
         respData = await resp.json()
     } catch (err) {
-        respData = undefined
+        return Promise.reject({
+            ok: resp.ok,
+            status: resp.status,
+            headers: resp.headers,
+            data: undefined
+        })
     }
 
     return {
