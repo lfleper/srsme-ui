@@ -66,13 +66,15 @@ import {
     ElForm,
     ElFormItem,
     ElInput,
-    ElButton
+    ElButton,
+    ElNotification
 } from 'element-plus'
 import { ArrowLeft } from '@element-plus/icons-vue'
 import { reactive } from 'vue'
 import { Token, UserLogin } from '@/types'
 import fetcher from '@/api/Api'
 import { TokenService } from '@/services/TokenService'
+import router from '@/router'
 
 const tokenService = new TokenService()
 let form: UserLogin = reactive({
@@ -102,14 +104,22 @@ let rules = reactive({
 const login = () => {
     fetcher<Token>('POST', '/auth/login', form)
         .then(data => {
-            console.log(data)
+            if (!data.data)
+                throw new Error('login failed')
+
+            tokenService.setToken(data.data)
         })
         .catch(err => {
-            console.log(form)
             if (err.status === 401) {
-                console.log('invalid username or password')
+                ElNotification({
+                    title: 'login failed',
+                    message: 'invalid username or password'
+                })
             } else {
-                console.log("Error: ", err)
+                ElNotification({
+                    title: 'login failed',
+                    message: 'something went wrong'
+                })
             }
         })
 }

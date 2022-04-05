@@ -10,4 +10,7 @@ body {
   padding: 0;
   background-color: #0099ff;
 }
+.el-notification {
+    font-family: 'Red Hat Mono', monospace;
+}
 </style>
