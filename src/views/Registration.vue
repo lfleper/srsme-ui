@@ -79,13 +79,16 @@ import {
     ElForm,
     ElFormItem,
     ElInput,
-    ElButton
+    ElButton,
+    ElNotification
 } from 'element-plus'
 import { ArrowLeft } from '@element-plus/icons-vue'
 import { reactive } from 'vue'
 import { Token, UserRegistration } from '@/types'
 import fetcher from '@/api/Api'
+import { TokenService } from '@/services/TokenService'
 
+const tokenService = new TokenService()
 let form: UserRegistration = reactive({
     firstName: '',
     lastName: '',
@@ -116,10 +119,23 @@ let rules = reactive({
 const signIn = () => {
     fetcher<Token>('POST', '/auth/register', form)
         .then(data => {
-            console.log(data)
+            if (!data.data)
+                throw new Error('registration failed')
+
+            tokenService.setToken(data.data)
         })
         .catch(err => {
-            console.log(err)
+            if (err.status === 409) {
+                ElNotification({
+                    title: 'registration failed',
+                    message: 'username already exists',
+                })
+            } else {
+                ElNotification({
+                    title: 'registration failed',
+                    message: 'something went wrong',
+                })
+            }
         })
 }
 
