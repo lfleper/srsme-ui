@@ -10,7 +10,7 @@ export class TokenService {
     public getToken(): Token | null {
         const cookieManager = useCookies()
         const cookie = cookieManager.cookies.get(this.TOKEN_COOKIE_NAME)
-        return cookie ? JSON.parse(cookie) : null
+        return cookie ? JSON.parse(JSON.stringify(cookie)) : null
     }
 
     public setToken(token: Token): void {
