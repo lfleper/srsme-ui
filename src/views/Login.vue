@@ -70,8 +70,11 @@ import {
 } from 'element-plus'
 import { ArrowLeft } from '@element-plus/icons-vue'
 import { reactive } from 'vue'
-import { UserLogin } from '@/types';
+import { Token, UserLogin } from '@/types'
+import fetcher from '@/api/Api'
+import { TokenService } from '@/services/TokenService'
 
+const tokenService = new TokenService()
 let form: UserLogin = reactive({
     username: '',
     password: ''
@@ -97,7 +100,18 @@ let rules = reactive({
 })
 
 const login = () => {
-    console.log(form)
+    fetcher<Token>('POST', '/auth/login', form)
+        .then(data => {
+            console.log(data)
+        })
+        .catch(err => {
+            console.log(form)
+            if (err.status === 401) {
+                console.log('invalid username or password')
+            } else {
+                console.log("Error: ", err)
+            }
+        })
 }
 
 </script>

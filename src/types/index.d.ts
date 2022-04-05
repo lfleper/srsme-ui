@@ -10,3 +10,9 @@ export interface UserRegistration {
     password: string,
     email: string
 }
+
+export interface Token {
+    tokenType: string,
+    jwtToken: string,
+    expiresIn: number
+}

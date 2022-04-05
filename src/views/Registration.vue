@@ -45,7 +45,7 @@
                             <el-input placeholder="last name" v-model="form.lastName" clearable/>
                         </el-form-item>
 
-                        <el-form-item label="e-mail" prop="email">
+                        <el-form-item label="e-mail" prop="eMail">
                             <el-input placeholder="e-mail" v-model="form.email" clearable></el-input>
                         </el-form-item>
 
@@ -83,7 +83,8 @@ import {
 } from 'element-plus'
 import { ArrowLeft } from '@element-plus/icons-vue'
 import { reactive } from 'vue'
-import { UserRegistration } from '@/types';
+import { Token, UserRegistration } from '@/types'
+import fetcher from '@/api/Api'
 
 let form: UserRegistration = reactive({
     firstName: '',
@@ -113,7 +114,13 @@ let rules = reactive({
 })
 
 const signIn = () => {
-    console.log(form)
+    fetcher<Token>('POST', '/auth/register', form)
+        .then(data => {
+            console.log(data)
+        })
+        .catch(err => {
+            console.log(err)
+        })
 }
 
 </script>
