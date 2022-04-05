@@ -108,6 +108,9 @@ const login = () => {
                 throw new Error('login failed')
 
             tokenService.setToken(data.data)
+            if (tokenService.isAuthenticated()) {
+                router.push('/dashboard')
+            }
         })
         .catch(err => {
             if (err.status === 401) {

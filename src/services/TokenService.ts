@@ -7,6 +7,10 @@ import { useCookies } from "vue3-cookies"
 export class TokenService {
     private readonly TOKEN_COOKIE_NAME = 'token'
 
+    public isAuthenticated(): boolean {
+        return this.getToken() !== null
+    }
+
     public getToken(): Token | null {
         const cookieManager = useCookies()
         const cookie = cookieManager.cookies.get(this.TOKEN_COOKIE_NAME)

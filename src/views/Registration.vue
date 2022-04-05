@@ -87,6 +87,7 @@ import { reactive } from 'vue'
 import { Token, UserRegistration } from '@/types'
 import fetcher from '@/api/Api'
 import { TokenService } from '@/services/TokenService'
+import router from '@/router'
 
 const tokenService = new TokenService()
 let form: UserRegistration = reactive({
@@ -152,6 +153,9 @@ const signIn = () => {
                 throw new Error('registration failed')
 
             tokenService.setToken(data.data)
+            if (tokenService.isAuthenticated()) {
+                router.push('/dashboard')
+            }
         })
         .catch(err => {
             if (err.status === 409) {
