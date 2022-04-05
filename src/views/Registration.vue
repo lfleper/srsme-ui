@@ -37,6 +37,10 @@
                         label-width="120px"
                         size="large"
                     >
+                        <el-form-item label="username" prop="username">
+                            <el-input placeholder="username" v-model="form.username" clearable/>
+                        </el-form-item>
+
                         <el-form-item label="first name" prop="firstName">
                             <el-input placeholder="first name" v-model="form.firstName" clearable/>
                         </el-form-item>
@@ -45,12 +49,8 @@
                             <el-input placeholder="last name" v-model="form.lastName" clearable/>
                         </el-form-item>
 
-                        <el-form-item label="e-mail" prop="eMail">
+                        <el-form-item label="e-mail" prop="email">
                             <el-input placeholder="e-mail" v-model="form.email" clearable></el-input>
-                        </el-form-item>
-
-                        <el-form-item label="username" prop="username">
-                            <el-input placeholder="username" v-model="form.username" clearable/>
                         </el-form-item>
 
                         <el-form-item label="password" prop="password">
@@ -109,11 +109,40 @@ let rules = reactive({
             trigger: 'blur'
         }
     ],
-    password: {
+    firstName: {
         required: true,
-        message: 'please enter your password',
+        message: 'please enter your first name',
         trigger: 'blur'
-    }
+    },
+    lastName: {
+        required: true,
+        message: 'please enter your last name',
+        trigger: 'blur'
+    },
+    email: [
+        {
+            required: true,
+            message: 'please enter your e-mail',
+            trigger: 'blur'
+        },
+        {
+            type: 'email',
+            message: 'please enter a valid e-mail',
+            trigger: 'blur'
+        }
+    ],
+    password: [
+        {
+            required: true,
+            message: 'please enter your password',
+            trigger: 'blur'
+        },
+        {
+            min: 6,
+            message: 'the minimum length of password is 6',
+            trigger: 'blur'
+        }
+    ]
 })
 
 const signIn = () => {
