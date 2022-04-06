@@ -1,0 +1,34 @@
+/**
+ * Used google fonts:
+ * - Monserrat Alternates (Regular 400)
+ * - Red Hat Mono (Light 300)
+ * - Red Hat Mono (Semi Bold 600)
+ */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates&family=Red+Hat+Mono:wght@300;600&display=swap');
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--srs-background);
+}
+
+.srs-logo {
+    font-family: 'Montserrat Alternates', sans-serif;
+    font-size: large;
+}
+
+/*****************************
+* element plus modifications *
+*****************************/
+
+.el-notification {
+    font-family: 'Red Hat Mono', monospace;
+}
+
+.el-menu-item, .el-sub-menu {
+    font-family: 'Montserrat Alternates', sans-serif;
+}
+.el-menu-item.dock-right, .el-sub-menu.dock-right {
+    margin: auto 0;
+    margin-left: auto;
+}

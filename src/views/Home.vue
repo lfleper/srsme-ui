@@ -7,7 +7,7 @@
             >
                 <el-menu-item index="1">
                     <template #title>
-                        <a class="title">SRSME</a>
+                        <a class="srs-logo">SRSME</a>
                     </template>
                 </el-menu-item>
 
@@ -103,16 +103,11 @@ const signIn = () => {
     router.push('/register')
 }
 
-
 </script>
 
 <style scoped>
 .main-container {
     background: white;
-}
-.title {
-    font-family: 'Montserrat Alternates', sans-serif;
-    font-size: large;
 }
 .login-bg {
     width: 100%;
@@ -132,10 +127,6 @@ const signIn = () => {
     font-size: calc(14px + (20 - 14) * (100vw - 300px) / (1200 - 300));
     font-family: 'Red Hat Mono', monospace;
     font-weight: 300;
-}
-.el-menu-item.dock-right {
-    margin: auto 0;
-    margin-left: auto;
 }
 .el-menu--horizontal > .el-menu-item.is-active {
     border-bottom: none;
