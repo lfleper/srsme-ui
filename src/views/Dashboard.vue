@@ -3,6 +3,7 @@
         <el-header>
             <el-menu
                 mode="horizontal"
+                :router="true"
             >
                 <el-menu-item index="1">
                     <template #title>
@@ -20,14 +21,14 @@
                     <el-menu-item index="2-1">
                         Account Settings
                     </el-menu-item>
-                    <el-menu-item index="2-2">
+                    <el-menu-item index="2-2" route="/dashboard/logout">
                         Log Out
                     </el-menu-item>
                 </el-sub-menu>
             </el-menu>
         </el-header>
         <el-main>
-
+            <router-view/>
         </el-main>
     </el-container>
 </template>

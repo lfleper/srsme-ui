@@ -31,7 +31,13 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/Dashboard.vue'),
     meta: {
       requiresAuth: true
-    }
+    },
+    children: [
+      {
+        path: 'logout',
+        component: () => import('@/views/Logout.vue')
+      }
+    ]
   }
 ]
 
