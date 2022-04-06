@@ -1,0 +1,26 @@
+.title {
+    font-family: 'Montserrat Alternates', sans-serif;
+    color: white;
+    font-size: calc(25px + (50 - 25) * (100vw - 300px) / (1200 - 300));
+    text-shadow: 0 0 4px #0099ff; /* horizontal-offset vertical-offset 'blur' colour */
+    -moz-text-shadow: 0 0 4px #0099ff;
+    -webkit-text-shadow: 0 0 4px #0099ff;
+}
+.el-main {
+    margin-top: 75px;
+}
+.el-menu {
+    background-color: transparent;
+    border: none;
+}
+.el-menu-item {
+    font-family: 'Montserrat Alternates', sans-serif;
+    color: black;
+}
+.el-menu--horizontal > .el-menu-item:not(.is-disabled):focus, 
+.el-menu--horizontal > .el-menu-item:not(.is-disabled):hover {
+    background: none;
+}
+.el-form, .el-button {
+    font-family: 'Montserrat Alternates', sans-serif;
+}
