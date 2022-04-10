@@ -45,13 +45,3 @@ import {
 } from 'element-plus'
 import { User } from '@element-plus/icons-vue'
 </script>
-
-<style>
-:root {
-    --srs-background: white;
-}
-</style>
-
-<style scoped>
-
-</style>

@@ -1,4 +1,6 @@
 :root {
+    --srs-primary: #0099ff;
+
     /* body background color */
-    --srs-background: #0099ff;
+    --srs-background: white;
 }

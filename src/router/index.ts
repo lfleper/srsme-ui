@@ -1,5 +1,8 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import Home from '@/views/Home.vue'
+import Login from '@/views/Login.vue'
+import Registration from '@/views/Registration.vue'
+import Dashboard from '@/views/Dashboard.vue'
 import { TokenService } from '@/services/TokenService'
 
 const routes: Array<RouteRecordRaw> = [
@@ -10,12 +13,12 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/home',
     name: 'Home',
-    component: Home 
+    component: Home
   },
   {
     path: '/login',
     name: 'Login',
-    component: () => import('@/views/Login.vue'),
+    component: Login,
     meta: {
       authPossible: true
     }
@@ -23,12 +26,12 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/register',
     name: 'Register',
-    component: () => import('@/views/Registration.vue')
+    component: Registration
   },
   {
     path: '/dashboard',
     name: 'Dashboard',
-    component: () => import('@/views/Dashboard.vue'),
+    component: Dashboard,
     meta: {
       requiresAuth: true
     },
