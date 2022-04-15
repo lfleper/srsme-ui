@@ -32,3 +32,7 @@ body {
     margin: auto 0;
     margin-left: auto;
 }
+
+.el-dropdown-menu {
+    font-family: 'Montserrat Alternates', sans-serif;
+}

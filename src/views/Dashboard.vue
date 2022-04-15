@@ -28,7 +28,6 @@
             </el-menu>
         </el-header>
         <el-main>
-            <h1>Username: {{user?.username}}</h1>
             <router-view/>
         </el-main>
     </el-container>
@@ -82,10 +81,6 @@ const loadUserData = () => {
 
 onMounted(() => {
     loadUserData()
-
-    setTimeout(() => {
-        console.log('user: ', user)
-    }, 1000)
 })
 
 </script>
