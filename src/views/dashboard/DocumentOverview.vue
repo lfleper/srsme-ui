@@ -26,7 +26,7 @@
             <el-row>
                 <document-card 
                     class="document-card"
-                    v-for="doc in test_docs" 
+                    v-for="doc in filteredDocuments" 
                     :key="doc.id" 
                     :doc="doc"
                 />
@@ -49,6 +49,7 @@ import {
     ElSelect,
     ElOption
 } from 'element-plus'
+import { computed } from '@vue/reactivity';
 
 const sortOptions = [
     {
@@ -65,7 +66,7 @@ const sortOptions = [
     }
 ]
 
-const test_docs: FlatDocument[] = reactive([
+let test_docs: FlatDocument[] = reactive([
     {
         id: '1',
         name: 'Document 1',
@@ -84,8 +85,8 @@ const test_docs: FlatDocument[] = reactive([
     {
         id: '2',
         name: 'Document 2',
-        dateOfCreation: new Date(),
-        lastModified: new Date(),
+        dateOfCreation: new Date(2021, 10, 12, 5, 20, 20, 10),
+        lastModified: new Date(2021, 11, 14, 6, 21, 21, 11),
         user: [
             {
                 id: '1',
@@ -98,10 +99,40 @@ const test_docs: FlatDocument[] = reactive([
     }
 ])
 
+const filterByString = (docs: FlatDocument[]) => {
+    return test_docs.filter(doc => {
+        return doc.name.toLowerCase().includes(form.searchString.toLowerCase())
+    })
+}
+
+const filterByOption = (docs: FlatDocument[]) => {
+    switch (form.sortBy) {
+        case '1':
+            return docs.sort((a, b) => {
+                return a.dateOfCreation.getTime() - b.dateOfCreation.getTime()
+            })
+        case '2':
+            return docs.sort((a, b) => {
+                return b.dateOfCreation.getTime() - a.dateOfCreation.getTime()
+            })
+        case '3':
+            return docs.sort((a, b) => {
+                return a.name.localeCompare(b.name)
+            })
+        default:
+            return docs
+    }
+}
+
 let form: DocumentFilter = reactive({
     searchString: '',
     sortBy: '1',
 })
+
+const filteredDocuments = computed(() => {
+    return filterByOption(filterByString(test_docs))
+})
+
 
 </script>
 
