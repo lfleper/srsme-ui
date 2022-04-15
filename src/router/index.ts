@@ -31,6 +31,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/dashboard',
     name: 'Dashboard',
+    redirect: '/dashboard/documents',
     component: Dashboard,
     meta: {
       requiresAuth: true
@@ -39,6 +40,10 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: 'logout',
         component: () => import('@/views/Logout.vue')
+      },
+      {
+        path: 'documents',
+        component: () => import('@/views/dashboard/DocumentOverview.vue')
       }
     ]
   }
