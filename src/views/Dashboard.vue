@@ -16,7 +16,7 @@
                         <el-icon>
                             <User/>
                         </el-icon>
-                        <span>{{user.username}}</span>
+                        <span>{{store.state.user?.username}}</span>
                     </template>
                     <el-menu-item index="2-1">
                         Account Settings
@@ -43,44 +43,22 @@ import {
     ElMenuItem,
     ElIcon
 } from 'element-plus'
-import { User as ApiUser } from '@/types'
 import { User } from '@element-plus/icons-vue'
-import fetcher from '@/api/Api'
 import router from '@/router'
 import { TokenService } from '@/services/TokenService'
-import { onMounted, reactive } from 'vue'
+import { onMounted } from 'vue'
+import store from '@/store'
 
 const tokenService = new TokenService()
-let user: ApiUser = reactive<ApiUser>({
-    id: '',
-    username: '',
-    firstName: '',
-    lastName: '',
-    email: '',
-    role: {
-        id: '',
-        role: ''
-    },
-    enabled: false
-})
-
-const loadUserData = () => {
-    fetcher<ApiUser>('GET', '/user/self')
-        .then(resp => {
-            if (!resp.data) {
-                throw new Error('User not found')
-            }         
-            Object.assign(user, resp.data)
-        })
-        .catch(err => {
-            console.log(err)
-            tokenService.removeToken()
-            router.push('/home')
-        })
-}
 
 onMounted(() => {
-    loadUserData()
+    try {
+        store.dispatch('getUser')
+    } catch (err) {
+        console.log(err)
+        tokenService.removeToken()
+        router.push('/home')
+    }
 })
 
 </script>

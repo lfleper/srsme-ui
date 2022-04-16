@@ -8,9 +8,9 @@
             <el-row>
                 <el-form :inline="true" :model="form">
                     <el-form-item label="">
-                        <el-input v-model="form.searchString" placeholder="search" />
+                        <el-input v-model="form.searchString" placeholder="search" clearable/>
                     </el-form-item>
-                    <el-form-item label="Sort by">
+                    <el-form-item label="Sort by:">
                         <el-select v-model="form.sortBy" clearable>
                             <el-option
                                 v-for="option in sortOptions"
@@ -23,22 +23,53 @@
                 </el-form>
             </el-row>
 
+            <el-divider/>
+
             <el-row>
+                <el-card class="create-document-card" @click="createDocumentDialogVisible = true">
+                    <img class="create-document-image" src="@/assets/illustrations/undraw_add.svg">
+                </el-card>
                 <document-card 
                     class="document-card"
                     v-for="doc in filteredDocuments" 
                     :key="doc.id" 
                     :doc="doc"
+                    @open="openDocument"
+                    @delete="deleteDocument"
                 />
             </el-row>
         </el-main>
+
+        <el-dialog 
+            v-model="createDocumentDialogVisible" 
+            title="Create Document"
+            destroy-on-close
+        >
+            <el-form label-position="top">
+                <el-form-item label="Document Name:">
+                    <el-input v-model="newDocumentName" placeholder="Enter name" autocomplete="off" clearable/> 
+                </el-form-item>
+
+                <!-- Unnecessary input field! Needed to work around a Vue bug. A single input field leads to reload of the page on enter. -->
+                <!-- Just leave it as long as a better workaround is found. -->
+                <el-form-item style="display: none;">
+                    <el-input placeholder="placeholder" autocomplete="off" clearable/>
+                </el-form-item>
+            </el-form>
+            <template #footer>
+                <span class="dialog-footer">
+                    <el-button @click="createDocumentDialogVisible = false">Cancel</el-button>
+                    <el-button type="primary" @click="createNewDocument">Create</el-button>
+                </span>
+            </template>
+        </el-dialog>
     </el-container>
 </template>
 
 <script setup lang="ts">
 import { DocumentFilter, FlatDocument } from '@/types'
 import DocumentCard from '@/components/DocumentCard.vue'
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import { 
     ElContainer, 
     ElMain, 
@@ -47,10 +78,16 @@ import {
     ElFormItem,
     ElInput,
     ElSelect,
-    ElOption
+    ElOption,
+    ElCard,
+    ElDivider,
+    ElDialog,
+    ElButton
 } from 'element-plus'
-import { computed } from '@vue/reactivity';
+import { computed, Ref } from '@vue/reactivity'
+import store from '@/store'
 
+const createDocumentDialogVisible = ref(false)
 const sortOptions = [
     {
         value: '1',
@@ -65,6 +102,12 @@ const sortOptions = [
         label: 'Name'
     }
 ]
+
+let form: DocumentFilter = reactive({
+    searchString: '',
+    sortBy: '1',
+})
+let newDocumentName: Ref<string> = ref('')
 
 let test_docs: FlatDocument[] = reactive([
     {
@@ -99,7 +142,7 @@ let test_docs: FlatDocument[] = reactive([
     }
 ])
 
-const filterByString = (docs: FlatDocument[]) => {
+const filterByString = () => {
     return test_docs.filter(doc => {
         return doc.name.toLowerCase().includes(form.searchString.toLowerCase())
     })
@@ -124,15 +167,34 @@ const filterByOption = (docs: FlatDocument[]) => {
     }
 }
 
-let form: DocumentFilter = reactive({
-    searchString: '',
-    sortBy: '1',
-})
-
 const filteredDocuments = computed(() => {
     return filterByOption(filterByString(test_docs))
 })
 
+const createNewDocument = () => {
+    if (newDocumentName.value === '' || !store.state.user)
+        return
+    
+    test_docs.push({
+        id: '',
+        name: newDocumentName.value,
+        dateOfCreation: new Date(),
+        lastModified: new Date(),
+        user: [
+            {...store.state.user, privilges: 'R/W'}
+        ]
+    })
+    newDocumentName.value = ''
+    createDocumentDialogVisible.value = false
+}
+
+const openDocument = (d: FlatDocument) => {
+    console.log(d)
+}
+
+const deleteDocument = (d: FlatDocument) => {
+    test_docs.splice(test_docs.indexOf(d), 1)
+}
 
 </script>
 
@@ -144,5 +206,18 @@ const filteredDocuments = computed(() => {
 }
 .document-card {
     margin: 0.5rem;
+}
+.create-document-card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 200px;
+    cursor: pointer;
+}
+.create-document-image {
+    width: 100%;
+}
+.dialog-footer button:first-child {
+    margin-right: 10px;
 }
 </style>

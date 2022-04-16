@@ -52,3 +52,7 @@ export interface Role {
     id: string,
     role: string
 }
+
+export interface VuexData {
+    user: User | undefined
+}

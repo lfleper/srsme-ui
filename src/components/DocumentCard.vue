@@ -1,8 +1,8 @@
 <template>
-    <el-card class="document-card">
+    <el-card class="document-card" @click="openDocument">
         <el-skeleton :rows="5" animated/>
         <div class="bottom">
-            <el-dropdown>
+            <el-dropdown @command="handleCommand">
                 <span class="el-dropdown-link">
                     {{doc.name}}
                     <el-icon>
@@ -11,13 +11,13 @@
                 </span>
                 <template #dropdown>
                     <el-dropdown-menu>
-                        <el-dropdown-item>
+                        <el-dropdown-item command="settings">
                             Settings
                         </el-dropdown-item>
-                        <el-dropdown-item>
+                        <el-dropdown-item command="export">
                             Export
                         </el-dropdown-item>
-                        <el-dropdown-item>
+                        <el-dropdown-item command="delete">
                             <span class="delete-item">Delete</span>
                         </el-dropdown-item>
                     </el-dropdown-menu>
@@ -37,18 +37,41 @@ import {
     ElIcon
 } from 'element-plus'
 import { ArrowDown } from '@element-plus/icons-vue'
-import { FlatDocument } from '@/types'
 import { toRefs, defineProps, defineEmits } from 'vue'
+import { FlatDocument } from '@/types'
 
-const props = defineProps({
-    doc: Object
-})
-const emits = defineEmits([
-    'delete',
-    'open'
-])
+const props = defineProps<{
+    doc: FlatDocument
+}>()
+// Delete and Open must be emitted so that the resulting changes 
+// are implemented directly in the interface.
+const emits = defineEmits<{
+    (e: 'delete', value: FlatDocument): void,
+    (e: 'open', value: FlatDocument): void
+}>()
 
 const { doc } = toRefs(props)
+
+const openDocument = () => emits('open', doc.value)
+const deleteDocument = () => emits('delete', doc.value)
+const exportDocument = () => console.log('export')
+const settingsDocument = () => console.log('settings')
+
+const handleCommand = (command: string | number) => {
+    switch (command) {
+        case 'settings':
+            settingsDocument()
+            break
+        case 'export':
+            exportDocument()
+            break
+        case 'delete':
+            deleteDocument()
+            break
+        default:
+            break
+    }
+}
 
 </script>
 
