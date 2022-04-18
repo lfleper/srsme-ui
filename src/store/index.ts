@@ -1,6 +1,10 @@
 import fetcher from '@/api/Api'
+import router from '@/router'
+import { TokenService } from '@/services/TokenService'
 import { User, VuexData } from '@/types'
 import { createStore } from 'vuex'
+
+const tokenService = new TokenService()
 
 const defaultState: VuexData = {
   user: undefined
@@ -24,7 +28,8 @@ export default createStore({
           })
           .catch(err => {
             console.error(err)
-            throw new Error('No user data')
+            tokenService.removeToken()
+            router.push('/home')
           })
     }
   },

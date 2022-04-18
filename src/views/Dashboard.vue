@@ -52,13 +52,7 @@ import store from '@/store'
 const tokenService = new TokenService()
 
 onMounted(() => {
-    try {
-        store.dispatch('getUser')
-    } catch (err) {
-        console.log(err)
-        tokenService.removeToken()
-        router.push('/home')
-    }
+    store.dispatch('getUser')
 })
 
 </script>

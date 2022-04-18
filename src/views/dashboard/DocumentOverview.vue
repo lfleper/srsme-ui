@@ -8,7 +8,7 @@
             <el-row>
                 <el-form :inline="true" :model="form">
                     <el-form-item label="">
-                        <el-input v-model="form.searchString" placeholder="search" clearable/>
+                        <el-input v-model="form.searchString" placeholder="search" autocomplete="off" clearable/>
                     </el-form-item>
                     <el-form-item label="Sort by:">
                         <el-select v-model="form.sortBy" clearable>
