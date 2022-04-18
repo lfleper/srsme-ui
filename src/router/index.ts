@@ -41,6 +41,11 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('@/views/Logout.vue')
       }
     ]
+    },
+  {
+    path: '/editor',
+    name: 'Editor',
+    component: () => import('@/components/TipTapEditor.vue')
   }
 ]
 
