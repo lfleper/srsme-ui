@@ -40,6 +40,7 @@
             </el-row>
         </el-main>
 
+        <!-- Dialog for creating a new document. -->
         <el-dialog 
             v-model="createDocumentDialogVisible" 
             title="Create Document"
@@ -69,7 +70,7 @@
 <script setup lang="ts">
 import { DocumentFilter, FlatDocument } from '@/types'
 import DocumentCard from '@/components/DocumentCard.vue'
-import { reactive, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import { 
     ElContainer, 
     ElMain, 
@@ -86,8 +87,11 @@ import {
 } from 'element-plus'
 import { computed, Ref } from '@vue/reactivity'
 import store from '@/store'
+import { DocumentService } from '@/services/DocumentService'
 
+const documentService = new DocumentService()
 const createDocumentDialogVisible = ref(false)
+let newDocumentName: Ref<string> = ref('')
 const sortOptions = [
     {
         value: '1',
@@ -107,43 +111,11 @@ let form: DocumentFilter = reactive({
     searchString: '',
     sortBy: '1',
 })
-let newDocumentName: Ref<string> = ref('')
 
-let test_docs: FlatDocument[] = reactive([
-    {
-        id: '1',
-        name: 'Document 1',
-        dateOfCreation: new Date(),
-        lastModified: new Date(),
-        user: [
-            {
-                id: '1',
-                username: 'lfleper',
-                firstName: 'Lukas',
-                lastName: 'Fleper',
-                privilges: 'R/W'
-            }
-        ]
-    },
-    {
-        id: '2',
-        name: 'Document 2',
-        dateOfCreation: new Date(2021, 10, 12, 5, 20, 20, 10),
-        lastModified: new Date(2021, 11, 14, 6, 21, 21, 11),
-        user: [
-            {
-                id: '1',
-                username: 'lfleper',
-                firstName: 'Lukas',
-                lastName: 'Fleper',
-                privilges: 'R/W'
-            }
-        ]
-    }
-])
+let flatDocuments: FlatDocument[] = reactive([])
 
-const filterByString = () => {
-    return test_docs.filter(doc => {
+const filterByString = (docs: FlatDocument[]) => {
+    return docs.filter(doc => {
         return doc.name.toLowerCase().includes(form.searchString.toLowerCase())
     })
 }
@@ -168,14 +140,14 @@ const filterByOption = (docs: FlatDocument[]) => {
 }
 
 const filteredDocuments = computed(() => {
-    return filterByOption(filterByString(test_docs))
+    return filterByOption(filterByString(flatDocuments))
 })
 
 const createNewDocument = () => {
     if (newDocumentName.value === '' || !store.state.user)
         return
     
-    test_docs.push({
+    flatDocuments.push({
         id: '',
         name: newDocumentName.value,
         dateOfCreation: new Date(),
@@ -193,8 +165,20 @@ const openDocument = (d: FlatDocument) => {
 }
 
 const deleteDocument = (d: FlatDocument) => {
-    test_docs.splice(test_docs.indexOf(d), 1)
+    flatDocuments.splice(flatDocuments.indexOf(d), 1)
 }
+
+onMounted(() => {
+    documentService.getFlatDocuments()
+        .then(resp => {
+            if (resp) {
+                flatDocuments.push(...resp)
+            }
+        })
+        .catch(err => {
+            console.log('error: ', err)
+        })
+})
 
 </script>
 

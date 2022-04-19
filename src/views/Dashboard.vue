@@ -44,12 +44,8 @@ import {
     ElIcon
 } from 'element-plus'
 import { User } from '@element-plus/icons-vue'
-import router from '@/router'
-import { TokenService } from '@/services/TokenService'
 import { onMounted } from 'vue'
 import store from '@/store'
-
-const tokenService = new TokenService()
 
 onMounted(() => {
     store.dispatch('getUser')

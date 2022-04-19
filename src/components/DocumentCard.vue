@@ -24,6 +24,12 @@
                 </template>
             </el-dropdown>
         </div>
+
+        <export-document-drawer
+            :doc="doc"
+            ref="exportDocumentDrawer"
+        >
+        </export-document-drawer>
     </el-card>
 </template>
 
@@ -37,8 +43,13 @@ import {
     ElIcon
 } from 'element-plus'
 import { ArrowDown } from '@element-plus/icons-vue'
-import { toRefs, defineProps, defineEmits } from 'vue'
+import { toRefs, defineProps, defineEmits, ref } from 'vue'
 import { FlatDocument } from '@/types'
+import ExportDocumentDrawer from '@/components/ExportDocumentDrawer.vue'
+
+interface ExportDocumentDrawerIntf extends HTMLElement {
+    open(): void
+}
 
 const props = defineProps<{
     doc: FlatDocument
@@ -51,10 +62,11 @@ const emits = defineEmits<{
 }>()
 
 const { doc } = toRefs(props)
+const exportDocumentDrawer = ref<ExportDocumentDrawerIntf | null>(null)
 
 const openDocument = () => emits('open', doc.value)
 const deleteDocument = () => emits('delete', doc.value)
-const exportDocument = () => console.log('export')
+const exportDocument = () => exportDocumentDrawer.value?.open()
 const settingsDocument = () => console.log('settings')
 
 const handleCommand = (command: string | number) => {
