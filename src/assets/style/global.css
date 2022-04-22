@@ -36,3 +36,11 @@ body {
 .el-dropdown-menu {
     font-family: 'Montserrat Alternates', sans-serif;
 }
+
+.el-dialog__title, .el-drawer__header {
+    font-family: 'Red Hat Mono', monospace;
+}
+
+.el-table, .el-form-item {
+    font-family: 'Montserrat Alternates', sans-serif;
+}

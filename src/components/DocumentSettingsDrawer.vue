@@ -9,13 +9,19 @@
         </template>
         <template #default>
             <el-row>
-                <el-form>
-                    <el-form-item label="Name">
-                        <el-input v-model="documentName" placeholder="name" size="large"></el-input>
+                <el-form 
+                    label-position="top"
+                >
+                    <el-form-item label="Document name">
+                        <el-input v-model="documentName" placeholder="name" size="large"/>
                     </el-form-item>
                 </el-form>
             </el-row>
+
+            <el-divider/>
+
             <el-row>
+                <h4 class="el-drawer__header">User</h4>
                 <el-table :data="doc.user" style="width: 100%;">
                     <el-table-column prop="username" label="Username"/>
                     <el-table-column prop="firstName" label="First name"/>
@@ -45,7 +51,8 @@ import {
     ElTableColumn,
     ElForm,
     ElFormItem,
-    ElInput
+    ElInput,
+    ElDivider
 } from 'element-plus'
 
 const props = defineProps<{
