@@ -62,3 +62,7 @@ export interface Chapter {
     content: string;
     chapterNo: number;
 }
+
+export interface Document extends FlatDocument {
+    chapters: Chapter[]
+}

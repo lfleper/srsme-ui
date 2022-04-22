@@ -1,35 +1,18 @@
 <template>
     <el-container>
         <el-aside class="editor-toolbar editor-item">
+            <h4 class="el-drawer__header">Chapters</h4>
             <el-menu
                 class="el-menu-vertical-demo"
                 mode="vertical"
                 theme="dark"
             >
-                <!--<el-menu-item
+                <el-menu-item
                     v-for="chapter in doc.chapters"
                     :key="chapter.chapterNo"
                 >
-                </el-menu-item>-->
-                <el-menu-item index="1">
-                    <template #title>Navigator One</template>
+                    <template #title>{{chapter.title}}</template>
                 </el-menu-item>
-                <el-menu-item-group>
-                    <template #title>
-                        <span>Group One</span>
-                    </template>
-                    <el-menu-item index="1-1">item one</el-menu-item>
-                    <el-menu-item index="1-2">item two</el-menu-item>
-                </el-menu-item-group>
-                <el-menu-item-group title="Group Two">
-                    <el-menu-item index="1-3">item three</el-menu-item>
-                </el-menu-item-group>
-                <el-sub-menu index="1-4">
-                    <template #title>
-                        <span>item four</span>
-                    </template>
-                    <el-menu-item index="1-4-1">item one</el-menu-item>
-                </el-sub-menu>
             </el-menu>
         </el-aside>
     </el-container>
@@ -41,13 +24,13 @@ import {
     ElContainer,
     ElAside,
     ElMenu,
-    ElMenuItem,
-    ElSubMenu,
-    ElMenuItemGroup
+    ElMenuItem
 } from 'element-plus'
-import { onMounted } from 'vue';
+import { onMounted, reactive } from 'vue'
+import { test_doc } from '@/test_data/Document'
 
 const route = useRoute()
+const doc = reactive(test_doc)
 
 onMounted(() => {
     const docId = route.params.id
