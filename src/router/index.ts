@@ -44,13 +44,13 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: 'documents',
         component: () => import('@/views/dashboard/DocumentOverview.vue')
+      },
+      {
+        path: 'editor/:id',
+        name: 'Editor',
+        component: () => import('@/views/dashboard/DocumentEditor.vue')
       }
     ]
-    },
-  {
-    path: '/editor',
-    name: 'Editor',
-    component: () => import('@/components/TipTapEditor.vue')
   }
 ]
 

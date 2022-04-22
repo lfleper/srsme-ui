@@ -88,6 +88,7 @@ import {
 import { computed, Ref } from '@vue/reactivity'
 import store from '@/store'
 import { DocumentService } from '@/services/DocumentService'
+import router from '@/router'
 
 const documentService = new DocumentService()
 const createDocumentDialogVisible = ref(false)
@@ -161,7 +162,12 @@ const createNewDocument = () => {
 }
 
 const openDocument = (d: FlatDocument) => {
-    console.log(d)
+    router.push({
+        name: 'Editor',
+        params: {
+            id: d.id
+        }
+    })
 }
 
 const deleteDocument = (d: FlatDocument) => {

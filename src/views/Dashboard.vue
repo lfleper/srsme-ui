@@ -5,7 +5,7 @@
                 mode="horizontal"
                 :router="true"
             >
-                <el-menu-item index="1">
+                <el-menu-item index="1" route="/dashboard">
                     <template #title>
                         <a class="srs-logo">SRSME</a>
                     </template>

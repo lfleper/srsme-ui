@@ -56,3 +56,9 @@ export interface Role {
 export interface VuexData {
     user: User | undefined
 }
+
+export interface Chapter {
+    title: string;
+    content: string;
+    chapterNo: number;
+}
