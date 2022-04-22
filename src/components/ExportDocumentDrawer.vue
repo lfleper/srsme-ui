@@ -2,9 +2,10 @@
     <el-drawer
         direction="rtl"
         v-model="exportDocumentDrawerVisible"
+        size="50%"
     >
         <template #title>
-            Export "{{doc.name}}"
+            <h4>Export "{{doc.name}}"</h4>
         </template>
         <template #default>
             <el-select v-model="exportOption" placeholder="format" size="large">
@@ -37,7 +38,7 @@ import {
     ElOption
 } from 'element-plus'
 import { FlatDocument } from '@/types'
-import { ref, toRefs, defineExpose, defineProps, reactive } from 'vue';
+import { ref, toRefs, defineExpose, defineProps, reactive } from 'vue'
 
 const props = defineProps<{
     doc: FlatDocument

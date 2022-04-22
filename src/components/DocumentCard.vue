@@ -30,6 +30,10 @@
             ref="exportDocumentDrawer"
         >
         </export-document-drawer>
+        <document-settings-drawer
+            :doc="doc"
+            ref="documentSettingsDrawer">
+        </document-settings-drawer>
     </el-card>
 </template>
 
@@ -46,8 +50,9 @@ import { ArrowDown } from '@element-plus/icons-vue'
 import { toRefs, defineProps, defineEmits, ref } from 'vue'
 import { FlatDocument } from '@/types'
 import ExportDocumentDrawer from '@/components/ExportDocumentDrawer.vue'
+import DocumentSettingsDrawer from '@/components/DocumentSettingsDrawer.vue'
 
-interface ExportDocumentDrawerIntf extends HTMLElement {
+interface DrawerIntf extends HTMLElement {
     open(): void
 }
 
@@ -62,12 +67,13 @@ const emits = defineEmits<{
 }>()
 
 const { doc } = toRefs(props)
-const exportDocumentDrawer = ref<ExportDocumentDrawerIntf | null>(null)
+const exportDocumentDrawer = ref<DrawerIntf | null>(null)
+const documentSettingsDrawer = ref<DrawerIntf | null>(null)
 
 const openDocument = () => emits('open', doc.value)
 const deleteDocument = () => emits('delete', doc.value)
 const exportDocument = () => exportDocumentDrawer.value?.open()
-const settingsDocument = () => console.log('settings')
+const settingsDocument = () => documentSettingsDrawer.value?.open()
 
 const handleCommand = (command: string | number) => {
     switch (command) {
