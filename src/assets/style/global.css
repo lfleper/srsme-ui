@@ -37,7 +37,7 @@ body {
     font-family: 'Montserrat Alternates', sans-serif;
 }
 
-.el-dialog__title, .el-drawer__header {
+.el-dialog__title, .el-drawer__header, .el-popconfirm__main {
     font-family: 'Red Hat Mono', monospace;
 }
 
