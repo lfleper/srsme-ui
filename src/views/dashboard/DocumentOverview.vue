@@ -202,7 +202,9 @@ onMounted(() => {
     justify-content: center;
     align-items: center;
     width: 200px;
+    height: 270px;
     cursor: pointer;
+    margin: 0.5rem;
 }
 .create-document-image {
     width: 100%;
