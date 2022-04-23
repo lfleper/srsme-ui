@@ -10,6 +10,7 @@
                     v-for="chapter in doc.chapters"
                     :key="chapter.chapterNo"
                     :index="chapter.chapterNo.toString()"
+                    @click="openChapter(chapter.chapterNo)"
                 >
                     <template #title>
                         {{chapter.title}}
@@ -33,6 +34,10 @@
             </el-menu>
         </el-aside>
 
+        <el-main>
+            <router-view />
+        </el-main>
+
         <el-dialog v-model="renameChapterDialogVisible" title="Rename the chapter">
             <el-form :model="editChapterForm">
                 <el-form-item label="Chapter Name:">
@@ -46,6 +51,7 @@
                 </span>
             </template>
         </el-dialog>
+
     </el-container>
 </template>
 
@@ -54,6 +60,7 @@ import { useRoute } from 'vue-router'
 import {
     ElContainer,
     ElAside,
+    ElMain,
     ElMenu,
     ElMenuItem,
     ElIcon,
@@ -66,8 +73,10 @@ import {
 import { EditPen, Delete } from '@element-plus/icons-vue'
 import { onMounted, reactive, ref } from 'vue'
 import { test_doc } from '@/test_data/Document'
+import router from '@/router'
 
 const route = useRoute()
+const docId = route.params.id
 const doc = reactive(test_doc)
 const renameChapterDialogVisible = ref(false)
 let editChapterForm = reactive({
@@ -88,9 +97,16 @@ const deleteChapter = (chapterNo: number) => {
     console.log('delete chapter', chapterNo)
     doc.chapters = doc.chapters.filter(c => c.chapterNo !== chapterNo)
 }
+const openChapter = (chapterNo: number) => {
+    router.push({
+        name: 'Chapter',
+        params: {
+            chapterNo: chapterNo
+        }
+    })
+}
 
 onMounted(() => {
-    const docId = route.params.id
     console.log(docId)
 })
 

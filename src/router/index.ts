@@ -48,7 +48,14 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: 'editor/:id',
         name: 'Editor',
-        component: () => import('@/views/dashboard/DocumentEditor.vue')
+        component: () => import('@/views/dashboard/DocumentEditor.vue'),
+        children: [
+          {
+            path: 'chapter/:chapterNo',
+            name: 'Chapter',
+            component: () => import('@/components/Editor.vue')
+          }
+        ]
       }
     ]
   }
