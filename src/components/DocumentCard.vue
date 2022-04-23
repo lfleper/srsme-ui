@@ -1,6 +1,6 @@
 <template>
-    <el-card class="document-card" @click="openDocument">
-        <el-skeleton :rows="5" animated/>
+    <el-card class="document-card">
+        <el-skeleton @click="openDocument" :rows="5" animated/>
         <div class="bottom">
             <el-dropdown @command="handleCommand">
                 <span class="el-dropdown-link">
