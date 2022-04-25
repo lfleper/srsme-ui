@@ -25,6 +25,7 @@ export interface DocumentFilter {
 export interface FlatDocument {
     id: string,
     name: string,
+    description: string,
     dateOfCreation: Date,
     lastModified: Date,
     user: DocumentUser[]
@@ -35,7 +36,7 @@ export interface DocumentUser {
     username: string,
     firstName: string,
     lastName: string,
-    privilges: string
+    documentPermission: string
 }
 
 export interface User {

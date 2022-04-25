@@ -13,8 +13,16 @@ export class DocumentService {
                 })
                 return resp.data
             })
-            .catch(err => {
-                console.log(err)
+    }
+
+    public async createDocument(name: string, description?: string): Promise<FlatDocument | void> {
+        return await fetcher<FlatDocument | null>('POST', '/document', { name: name, description: description })
+            .then(resp => {
+                if (!resp.data) 
+                    throw new Error ('error creating document.')
+                resp.data.lastModified = new Date(resp.data.lastModified)
+                resp.data.dateOfCreation = new Date(resp.data.dateOfCreation)
+                return resp.data
             })
     }
 }

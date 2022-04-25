@@ -148,15 +148,21 @@ const createNewDocument = () => {
     if (newDocumentName.value === '' || !store.state.user)
         return
     
-    flatDocuments.push({
-        id: '',
-        name: newDocumentName.value,
-        dateOfCreation: new Date(),
-        lastModified: new Date(),
-        user: [
-            {...store.state.user, privilges: 'R/W'}
-        ]
-    })
+    documentService.createDocument(newDocumentName.value, '')
+        .then((flatDocument) => {
+            if (!flatDocument) {
+                console.log('cannot create new document', newDocumentName.value)
+            } else {
+                flatDocuments.push(flatDocument)
+            }
+            newDocumentName.value = ''
+            createDocumentDialogVisible.value = false
+
+        })
+        .catch(err => {
+            console.log('cannot create new document', newDocumentName.value, err)
+        })
+
     newDocumentName.value = ''
     createDocumentDialogVisible.value = false
 }
