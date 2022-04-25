@@ -83,7 +83,8 @@ import {
     ElCard,
     ElDivider,
     ElDialog,
-    ElButton
+    ElButton,
+    ElNotification
 } from 'element-plus'
 import { computed, Ref } from '@vue/reactivity'
 import store from '@/store'
@@ -161,6 +162,10 @@ const createNewDocument = () => {
         })
         .catch(err => {
             console.log('cannot create new document', newDocumentName.value, err)
+            ElNotification({
+                title: 'Cannot create document',
+                message: 'Something went wrong while creating the document. Please try again later.',
+            })
         })
 
     newDocumentName.value = ''
@@ -177,7 +182,25 @@ const openDocument = (d: FlatDocument) => {
 }
 
 const deleteDocument = (d: FlatDocument) => {
-    flatDocuments.splice(flatDocuments.indexOf(d), 1)
+    documentService.deleteDocument(d.id)
+        .then(() => {
+            flatDocuments.splice(flatDocuments.findIndex(doc => doc.id === d.id), 1)
+        })
+        .catch(err => {
+            if (err.status === 403) {
+                console.log('No permission to delete the document.')
+                ElNotification({
+                    title: 'Cannot delete document',
+                    message: 'You have no permission to delete this document.'
+                })
+            } else {
+                console.log('cannot delete document', d.id, err)
+                ElNotification({
+                    title: 'Cannot delete document',
+                    message: 'Something went wrong while deleting the document.'
+                })
+            }
+        })
 }
 
 onMounted(() => {

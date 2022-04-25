@@ -25,4 +25,12 @@ export class DocumentService {
                 return resp.data
             })
     }
+
+    public async deleteDocument(id: string): Promise<void> {
+        return await fetcher<void>('DELETE', `/document/${id}`)
+            .then(resp => {
+                if (!resp.ok) 
+                    throw new Error (`error deleting document ${id}.`)
+            })
+    }
 }
