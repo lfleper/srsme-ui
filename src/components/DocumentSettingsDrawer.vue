@@ -17,6 +17,11 @@
                     </el-form-item>
                 </el-form>
             </el-row>
+            <el-row>
+                <el-button @click="save" type="primary">
+                    Save
+                </el-button>
+            </el-row>
 
             <el-divider/>
 
@@ -48,7 +53,7 @@
                         </template>
                     </el-table-column>
                 </el-table>
-                <el-button style="width: 100%;" @click="addUser">
+                <el-button style="width: 100%;" @click="addUserDialog">
                     Add User
                 </el-button>
             </el-row>
@@ -56,9 +61,6 @@
         <template #footer>
             <el-button @click="documentSettingsDrawerVisible = false">
                 Cancel
-            </el-button>
-            <el-button @click="save" type="primary">
-                Save
             </el-button>
         </template>
     </el-drawer>
@@ -140,9 +142,30 @@ let newDocumentUser = reactive<AddUserToDocumentDto>({
 
 const open = () => documentSettingsDrawerVisible.value = true
 const save = () => {
-    console.log('save')
-    console.log(documentName.value)
-    documentSettingsDrawerVisible.value = false
+    if (documentName.value === doc.value.name) {
+        return
+    }
+    if (documentName.value === '') {
+        ElNotification.error({
+            title: 'Error',
+            message: 'Document name cannot be empty'
+        })
+        return
+    }
+    documentService.updateDocumentName(doc.value.id, documentName.value)
+        .then(() => {
+            ElNotification.success({
+                title: 'Success',
+                message: 'Document name updated'
+            })
+            doc.value.name = documentName.value
+        })
+        .catch(() => {
+            ElNotification.error({
+                title: 'Error',
+                message: 'Failed to update document name'
+            })
+        })
 }
 const deleteUser = (index: number, row: DocumentUser) => {
     console.log(index, row)
@@ -175,7 +198,7 @@ const updateDocumentPermission = (row: DocumentUser) => {
             })
         })
 }
-const addUser = () => {
+const addUserDialog = () => {
     addUserDialogVisible.value = true
 }
 const addUserToDocument = () => {

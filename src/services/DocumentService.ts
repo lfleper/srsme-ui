@@ -60,4 +60,13 @@ export class DocumentService {
                 return resp.data
             })
     }
+
+    public async updateDocumentName(documentId: string, name: string): Promise<FlatDocument | void> {
+        return await fetcher<FlatDocument>('PUT', `/document/${documentId}/${name}`)
+            .then(resp => {
+                if (!resp.ok) 
+                    throw new Error (`error updating document name.`)
+                return resp.data
+            })
+    }
 }
