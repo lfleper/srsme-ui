@@ -7,22 +7,22 @@
                 mode="vertical"
             >
                 <el-menu-item
-                    v-for="chapter in doc.chapters"
-                    :key="chapter.chapterNo"
-                    :index="chapter.chapterNo.toString()"
-                    @click="openChapter(chapter.chapterNo)"
+                    v-for="chapter in flatChaperts"
+                    :key="chapter.nr"
+                    :index="chapter.nr.toString()"
+                    @click="openChapter(chapter.nr)"
                 >
                     <template #title>
-                        {{chapter.title}}
+                        {{chapter.name}}
                         <div class="menu-btn-grp">
-                            <el-icon @click="editChapter(chapter.chapterNo)"><EditPen/></el-icon>
+                            <el-icon @click="editChapter(chapter.nr)"><EditPen/></el-icon>
                             <el-popconfirm
                                 confirm-button-text="OK"
                                 cancel-button-text="Cancel"
                                 icon-color="red"
                                 :icon="Delete"
                                 title="Are you sure to delete this chapter?"
-                                @confirm="deleteChapter(chapter.chapterNo)"
+                                @confirm="deleteChapter(chapter.nr)"
                             >
                                 <template #reference>
                                     <el-icon><Delete/></el-icon>
@@ -74,10 +74,14 @@ import { EditPen, Delete } from '@element-plus/icons-vue'
 import { onMounted, reactive, ref } from 'vue'
 import { test_doc } from '@/test_data/Document'
 import router from '@/router'
+import { ChapterService } from '@/services/ChapterService'
+import { FlatChapter } from '@/types'
 
+const chapterService = new ChapterService()
 const route = useRoute()
-const docId = route.params.id
-const doc = reactive(test_doc)
+const docId = route.params.id.toString()
+//const doc = reactive(test_doc)
+let flatChaperts = ref<FlatChapter[]>([])
 const renameChapterDialogVisible = ref(false)
 let editChapterForm = reactive({
     title: ''
@@ -85,9 +89,10 @@ let editChapterForm = reactive({
 
 const editChapter = (chapterNo: number) => {
     renameChapterDialogVisible.value = true
-    const chapter = doc.chapters.find(c => c.chapterNo === chapterNo)
-    editChapterForm.title = chapter?.title ?? ''
-    console.log('edit chapter', chapter)
+    console.log(chapterNo)
+    // const chapter = doc.chapters.find(c => c.nr === chapterNo)
+    // editChapterForm.title = chapter?.title ?? ''
+    // console.log('edit chapter', chapter)
 }
 const renameChapter = () => {
     console.log('rename chapter', editChapterForm)
@@ -95,7 +100,7 @@ const renameChapter = () => {
 }
 const deleteChapter = (chapterNo: number) => {
     console.log('delete chapter', chapterNo)
-    doc.chapters = doc.chapters.filter(c => c.chapterNo !== chapterNo)
+    //doc.chapters = doc.chapters.filter(c => c.nr !== chapterNo)
 }
 const openChapter = (chapterNo: number) => {
     router.push({
@@ -105,9 +110,23 @@ const openChapter = (chapterNo: number) => {
         }
     })
 }
+const loadChaptersForDocument = () => {
+    chapterService.getFlatChapters(docId)
+        .then(resp => {
+            console.log(resp)
+            if (!resp)
+                return
+            flatChaperts.value = resp
+        })
+        .catch(err => {
+            console.error(err)
+        })
+    console.log('load chapters for document', docId)
+}
 
 onMounted(() => {
     console.log(docId)
+    loadChaptersForDocument()
 })
 
 </script>

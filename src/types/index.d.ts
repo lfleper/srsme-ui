@@ -58,10 +58,15 @@ export interface VuexData {
     user: User | undefined
 }
 
-export interface Chapter {
-    title: string;
+export interface Chapter extends FlatChapter {
     content: string;
-    chapterNo: number;
+}
+
+export interface FlatChapter {
+    id: string,
+    name: string,
+    description: string,
+    nr: number
 }
 
 export interface Document extends FlatDocument {
