@@ -1,5 +1,5 @@
 import fetcher from "@/api/Api"
-import { FlatDocument } from "@/types"
+import { DocumentUser, FlatDocument } from "@/types"
 
 export class DocumentService {
     public async getFlatDocuments(): Promise<FlatDocument[] | void> {
@@ -31,6 +31,15 @@ export class DocumentService {
             .then(resp => {
                 if (!resp.ok) 
                     throw new Error (`error deleting document ${id}.`)
+            })
+    }
+
+    public async updateDocumentUserPermission(documentId: string, documentUser: DocumentUser): Promise<FlatDocument | void> {
+        return await fetcher<void>('PUT', `/document/${documentId}/user`, documentUser)
+            .then(resp => {
+                if (!resp.ok) 
+                    throw new Error (`error updating document user permission.`)
+                return resp.data
             })
     }
 }

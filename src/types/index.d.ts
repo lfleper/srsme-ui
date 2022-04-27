@@ -28,7 +28,7 @@ export interface FlatDocument {
     description: string,
     dateOfCreation: Date,
     lastModified: Date,
-    user: DocumentUser[]
+    users: DocumentUser[]
 }
 
 export interface DocumentUser {

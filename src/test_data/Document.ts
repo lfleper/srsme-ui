@@ -3,15 +3,16 @@ import { Document } from "@/types"
 export const test_doc: Document = {
     id: "1",
     name: "Document 1",
+    description: '',
     dateOfCreation: new Date(),
     lastModified: new Date(),
-    user: [
+    users: [
         {
             id: "1",
             username: "user1",
             firstName: "User",
             lastName: "One",
-            privilges: "user"
+            documentPermission: "user"
         }
     ],
     chapters: [
