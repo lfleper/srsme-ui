@@ -103,7 +103,23 @@ const save = () => {
 }
 const deleteUser = (index: number, row: DocumentUser) => {
     console.log(index, row)
-    doc.value.users.splice(index, 1)
+    documentService.deleteUserFromDocument(doc.value.id, row)
+        .then(() => {
+            doc.value.users.splice(index, 1)
+        })
+        .catch(resp => {
+            if (resp.status === 403) {
+                ElNotification.error({
+                    title: 'Error deleting user',
+                    message: 'You are not allowed to delete this user'
+                })
+            } else {
+                ElNotification.error({
+                    title: 'Error deleting user',
+                    message: 'Something went wrong'
+                })
+            }
+        })
 }
 const updateDocumentPermission = (row: DocumentUser) => {
     // ToDo: Disable select if user is not owner

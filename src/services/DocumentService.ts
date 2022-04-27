@@ -42,4 +42,13 @@ export class DocumentService {
                 return resp.data
             })
     }
+
+    public async deleteUserFromDocument(documentId: string, documentUser: DocumentUser): Promise<FlatDocument | void> {
+        return await fetcher<void>('DELETE', `/document/${documentId}/user`, documentUser)
+            .then(resp => {
+                if (!resp.ok) 
+                    throw new Error (`error deleting user from document.`)
+                return resp.data
+            })
+    }
 }
