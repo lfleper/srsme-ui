@@ -1,5 +1,8 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import Home from '@/views/Home.vue'
+import Login from '@/views/Login.vue'
+import Registration from '@/views/Registration.vue'
+import Dashboard from '@/views/Dashboard.vue'
 import { TokenService } from '@/services/TokenService'
 
 const routes: Array<RouteRecordRaw> = [
@@ -10,12 +13,12 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/home',
     name: 'Home',
-    component: Home 
+    component: Home
   },
   {
     path: '/login',
     name: 'Login',
-    component: () => import('@/views/Login.vue'),
+    component: Login,
     meta: {
       authPossible: true
     }
@@ -23,15 +26,38 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/register',
     name: 'Register',
-    component: () => import('@/views/Registration.vue')
+    component: Registration
   },
   {
     path: '/dashboard',
     name: 'Dashboard',
-    component: () => import('@/views/Dashboard.vue'),
+    redirect: '/dashboard/documents',
+    component: Dashboard,
     meta: {
       requiresAuth: true
-    }
+    },
+    children: [
+      {
+        path: 'logout',
+        component: () => import('@/views/Logout.vue')
+      },
+      {
+        path: 'documents',
+        component: () => import('@/views/dashboard/DocumentOverview.vue')
+      },
+      {
+        path: 'editor/:id',
+        name: 'Editor',
+        component: () => import('@/views/dashboard/DocumentEditor.vue'),
+        children: [
+          {
+            path: 'chapter/:chapterNo',
+            name: 'Chapter',
+            component: () => import('@/components/Editor.vue')
+          }
+        ]
+      }
+    ]
   }
 ]
 
