@@ -26,7 +26,7 @@
                     <el-table-column prop="username" label="Username"/>
                     <el-table-column prop="firstName" label="First name"/>
                     <el-table-column prop="lastName" label="Last name"/>
-                    <el-table-column label="">
+                    <el-table-column label="Permission">
                         <template #default="scope">
                             <el-select
                                 size="small"
@@ -62,11 +62,50 @@
             </el-button>
         </template>
     </el-drawer>
+
+    <el-dialog
+        v-model="addUserDialogVisible"
+        title="Add User"
+    >
+        <el-form
+            :model="newDocumentUser"
+        >
+            <el-form-item
+                label="Username"
+            >
+                <el-input v-model="newDocumentUser.username" autocomplete="off" />
+            </el-form-item>
+            <el-form-item
+                label="Permission"
+            >
+                <el-select
+                    v-model="newDocumentUser.documentPermission"
+                    size="small"
+                >
+                    <el-option
+                        v-for="permission in ['READ_ONLY', 'READ_WRITE']"
+                        :key="permission"
+                        :label="permission"
+                        :value="permission"
+                    />
+                </el-select>
+            </el-form-item>
+        </el-form>  
+
+        <template #footer>
+            <span class="dialog-footer">
+                <el-button @click="addUserDialogVisible = false">Cancel</el-button>
+                <el-button type="primary" @click="addUserToDocument">
+                    Confirm
+                </el-button>
+            </span>
+        </template>
+    </el-dialog>
 </template>
 
 <script setup lang="ts">
-import { DocumentUser, FlatDocument } from '@/types'
-import { defineProps, ref, toRefs, defineExpose } from 'vue'
+import { AddUserToDocumentDto, DocumentUser, FlatDocument } from '@/types'
+import { defineProps, ref, toRefs, defineExpose, reactive } from 'vue'
 import { DocumentService } from '@/services/DocumentService'
 import {
     ElDrawer,
@@ -80,7 +119,8 @@ import {
     ElDivider,
     ElSelect,
     ElOption,
-    ElNotification
+    ElNotification,
+    ElDialog
 } from 'element-plus'
 import { Delete } from '@element-plus/icons-vue'
 
@@ -92,8 +132,11 @@ const props = defineProps<{
 const { doc } = toRefs(props)
 const documentSettingsDrawerVisible = ref(false)
 const documentName = ref(doc.value.name)
-
-console.log(doc.value)
+const addUserDialogVisible = ref(false)
+let newDocumentUser = reactive<AddUserToDocumentDto>({
+    username: '',
+    documentPermission: ''
+})
 
 const open = () => documentSettingsDrawerVisible.value = true
 const save = () => {
@@ -133,7 +176,55 @@ const updateDocumentPermission = (row: DocumentUser) => {
         })
 }
 const addUser = () => {
-    console.log('addUser')
+    addUserDialogVisible.value = true
+}
+const addUserToDocument = () => {
+    if (newDocumentUser.username.length === 0) {
+        ElNotification.error({
+            title: 'Cannot add user',
+            message: 'Username is required'
+        })
+        return
+    }
+    if (newDocumentUser.documentPermission.length === 0) {
+        ElNotification.error({
+            title: 'Cannot add user',
+            message: 'Permission is required'
+        })
+        return
+    }
+    if (doc.value.users.find(user => user.username === newDocumentUser.username)) {
+        ElNotification.error({
+            title: 'Cannot add user',
+            message: 'User already exists'
+        })
+        return
+    }
+    documentService.addUserToDocument(doc.value.id, newDocumentUser)
+        .then(resp => {
+            if (!resp) {
+                ElNotification.error({
+                    title: 'Cannot add user',
+                    message: 'User does not exist'
+                })
+                return
+            }
+            console.log(resp.users)
+            let user = resp.users.find(user => user.username === newDocumentUser.username)
+            if (user) {
+                doc.value.users.push(user)
+            }
+            newDocumentUser.username = ''
+            newDocumentUser.documentPermission = ''
+            addUserDialogVisible.value = false
+        })
+        .catch(err => {
+            console.log(err)
+            ElNotification.error({
+                title: 'Cannot add user',
+                message: 'Something went wrong'
+            })
+        })
 }
 
 defineExpose({

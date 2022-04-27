@@ -1,5 +1,5 @@
 import fetcher from "@/api/Api"
-import { DocumentUser, FlatDocument } from "@/types"
+import { AddUserToDocumentDto, DocumentUser, FlatDocument } from "@/types"
 
 export class DocumentService {
     public async getFlatDocuments(): Promise<FlatDocument[] | void> {
@@ -35,7 +35,7 @@ export class DocumentService {
     }
 
     public async updateDocumentUserPermission(documentId: string, documentUser: DocumentUser): Promise<FlatDocument | void> {
-        return await fetcher<void>('PUT', `/document/${documentId}/user`, documentUser)
+        return await fetcher<FlatDocument>('PUT', `/document/${documentId}/user`, documentUser)
             .then(resp => {
                 if (!resp.ok) 
                     throw new Error (`error updating document user permission.`)
@@ -44,10 +44,19 @@ export class DocumentService {
     }
 
     public async deleteUserFromDocument(documentId: string, documentUser: DocumentUser): Promise<FlatDocument | void> {
-        return await fetcher<void>('DELETE', `/document/${documentId}/user`, documentUser)
+        return await fetcher<FlatDocument>('DELETE', `/document/${documentId}/user`, documentUser)
             .then(resp => {
                 if (!resp.ok) 
                     throw new Error (`error deleting user from document.`)
+                return resp.data
+            })
+    }
+
+    public async addUserToDocument(documentId: string, newUser: AddUserToDocumentDto): Promise<FlatDocument | void> {
+        return await fetcher<FlatDocument>('POST', `/document/${documentId}/user`, newUser)
+            .then(resp => {
+                if (!resp.ok) 
+                    throw new Error (`error adding user to document.`)
                 return resp.data
             })
     }

@@ -67,3 +67,8 @@ export interface Chapter {
 export interface Document extends FlatDocument {
     chapters: Chapter[]
 }
+
+export interface AddUserToDocumentDto {
+    username: string,
+    documentPermission: string
+}
