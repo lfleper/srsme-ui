@@ -15,7 +15,7 @@
                     <template #title>
                         {{chapter.name}}
                         <div class="menu-btn-grp">
-                            <el-icon @click="editChapter(chapter.nr)"><EditPen/></el-icon>
+                            <el-icon @click="editChapter(chapter.id, chapter.name)"><EditPen/></el-icon>
                             <el-popconfirm
                                 confirm-button-text="OK"
                                 cancel-button-text="Cancel"
@@ -85,18 +85,37 @@ const docId = route.params.id.toString()
 let flatChaperts = ref<FlatChapter[]>([])
 const renameChapterDialogVisible = ref(false)
 let editChapterForm = reactive({
-    title: ''
+    title: '',
+    chapterId: ''
 })
 
-const editChapter = (chapterNo: number) => {
+const editChapter = (chapterId: string, chapterName: string) => {
+    editChapterForm.chapterId = chapterId
+    editChapterForm.title = chapterName
     renameChapterDialogVisible.value = true
-    console.log(chapterNo)
-    // const chapter = doc.chapters.find(c => c.nr === chapterNo)
-    // editChapterForm.title = chapter?.title ?? ''
-    // console.log('edit chapter', chapter)
 }
 const renameChapter = () => {
     console.log('rename chapter', editChapterForm)
+    chapterService.updateChaperName(docId, editChapterForm.chapterId, editChapterForm.title)
+        .then(resp => {
+            ElNotification.success({
+                title: 'Success',
+                message: 'Chapter name updated successfully'
+            })
+            flatChaperts.value.map(chapter => {
+                if (chapter.id === editChapterForm.chapterId) {
+                    chapter.name = editChapterForm.title
+                }
+            })
+            editChapterForm.title = ''
+            editChapterForm.chapterId = ''
+        })
+        .catch(() => {
+            ElNotification.error({
+                title: 'Error',
+                message: 'Chapter name update failed'
+            })
+        })
     renameChapterDialogVisible.value = false
 }
 const deleteChapter = (chapterId: string) => {

@@ -17,4 +17,12 @@ export class ChapterService {
                     throw new Error (`error deleting chapter ${chapterId}.`)
             })
     }
+    public async updateChaperName(documentId: string, chapterId: string, newName: string): Promise<FlatChapter | void> {
+        return await fetcher<FlatChapter | null>('PUT', `/document/${documentId}/chapters/${chapterId}/${newName}`)
+            .then(resp => {
+                if (!resp.data)
+                    throw new Error (`error updating chapter ${chapterId}.`)
+                return resp.data
+            })
+    }
 }
