@@ -49,7 +49,17 @@
                     </el-table-column>
                     <el-table-column label="Operations">
                         <template #default="scope">
-                            <el-button type="danger" :icon="Delete" size="small" @click="deleteUser(scope.$index, scope.row)"/>
+                            <el-popconfirm
+                                confirm-button-text="OK"
+                                cancel-button-text="Cancel"
+                                icon-color="red"
+                                title="Are you sure to delete this user?"
+                                @confirm="deleteUser(scope.$index, scope.row)"
+                            >
+                                <template #reference>
+                                    <el-button type="danger" :icon="Delete" size="small"/>
+                                </template>
+                            </el-popconfirm>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -122,7 +132,8 @@ import {
     ElSelect,
     ElOption,
     ElNotification,
-    ElDialog
+    ElDialog,
+    ElPopconfirm
 } from 'element-plus'
 import { Delete } from '@element-plus/icons-vue'
 
