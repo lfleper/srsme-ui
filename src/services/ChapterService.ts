@@ -10,4 +10,11 @@ export class ChapterService {
                 return resp.data
             })
     }
+    public async deleteChapter(documentId: string, chapterId: string): Promise<void> {
+        return await fetcher<void>('DELETE', `/document/${documentId}/chapters/${chapterId}`)
+            .then(resp => {
+                if (!resp.ok)
+                    throw new Error (`error deleting chapter ${chapterId}.`)
+            })
+    }
 }

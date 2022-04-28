@@ -22,7 +22,7 @@
                                 icon-color="red"
                                 :icon="Delete"
                                 title="Are you sure to delete this chapter?"
-                                @confirm="deleteChapter(chapter.nr)"
+                                @confirm="deleteChapter(chapter.id)"
                             >
                                 <template #reference>
                                     <el-icon><Delete/></el-icon>
@@ -68,7 +68,8 @@ import {
     ElDialog,
     ElForm,
     ElInput,
-    ElFormItem
+    ElFormItem,
+    ElNotification
 } from 'element-plus'
 import { EditPen, Delete } from '@element-plus/icons-vue'
 import { onMounted, reactive, ref } from 'vue'
@@ -98,9 +99,19 @@ const renameChapter = () => {
     console.log('rename chapter', editChapterForm)
     renameChapterDialogVisible.value = false
 }
-const deleteChapter = (chapterNo: number) => {
-    console.log('delete chapter', chapterNo)
-    //doc.chapters = doc.chapters.filter(c => c.nr !== chapterNo)
+const deleteChapter = (chapterId: string) => {
+    console.log('delete chapter', chapterId)
+    chapterService.deleteChapter(docId, chapterId)
+        .then(() => {
+            flatChaperts.value = flatChaperts.value.filter(c => c.id !== chapterId)
+        })
+        .catch(err => {
+            console.error(err)
+            ElNotification.error({
+                title: 'Error deleting chapter',
+                message: 'Something went wrong while deleting the chapter'
+            })
+        })
 }
 const openChapter = (chapterNo: number) => {
     router.push({
