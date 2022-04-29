@@ -10,10 +10,14 @@
                     v-for="chapter in flatChaperts"
                     :key="chapter.nr"
                     :index="chapter.nr.toString()"
-                    @click="openChapter(chapter.nr)"
                 >
                     <template #title>
-                        {{chapter.name}}
+                        <span 
+                            class="chapter-name" 
+                            @click="openChapter(chapter.nr)"
+                        >
+                            {{chapter.name}}
+                        </span>
                         <div class="menu-btn-grp">
                             <el-icon @click="editChapter(chapter.id, chapter.name)"><EditPen/></el-icon>
                             <el-popconfirm
@@ -168,5 +172,10 @@ onMounted(() => {
     align-items: flex-end;
     justify-content: flex-end;
     margin-left: auto;
+}
+.chapter-name {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 </style>
