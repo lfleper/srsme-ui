@@ -11,4 +11,16 @@ export class UserService {
                 return resp.data
             })
     }
+
+    public async updateUserPassword(userId: string, password: string, confirmedPassword: string): Promise<void> {
+        if (password !== confirmedPassword) {
+            throw new Error('passwords do not match')
+        }
+        return await fetcher<void>('PUT', `/user/${userId}`, { password: password })
+            .then(resp => {
+                if (!resp.ok) {
+                    throw new Error('can not update user password')
+                }
+            })
+    }
 }

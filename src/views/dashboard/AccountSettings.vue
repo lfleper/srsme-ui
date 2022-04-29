@@ -150,13 +150,16 @@ let changePassword = reactive({
 })
 
 const save = () => {
-    console.log(userAccount)
     userService.updateUser(userAccount)
         .then(resp => {
             if (!resp) {
                 throw Error('Error updating user')
             }
             store.commit('user', resp)
+            ElNotification.success({
+                title: 'Success',
+                message: 'User updated successfully'
+            })
         })
         .catch(err => {
             ElNotification.error({
@@ -166,7 +169,20 @@ const save = () => {
         })
 }
 const savePassword = () => {
-    console.log(changePassword)
+    userService.updateUserPassword(userAccount.id, changePassword.password, changePassword.confirmPassword)
+        .then(() => {
+            ElNotification.success({
+                title: 'Success',
+                message: 'Password updated successfully'
+            })
+        })
+        .catch(err => {
+            console.log(err)
+            ElNotification.error({
+                title: 'Error',
+                message: 'Failed to update user'
+            })
+        })
 }
 
 </script>
