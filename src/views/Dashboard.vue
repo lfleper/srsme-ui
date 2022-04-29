@@ -18,7 +18,7 @@
                         </el-icon>
                         <span>{{store.state.user?.username}}</span>
                     </template>
-                    <el-menu-item index="2-1">
+                    <el-menu-item index="2-1" route="/dashboard/account">
                         Account Settings
                     </el-menu-item>
                     <el-menu-item index="2-2" route="/dashboard/logout">

@@ -46,6 +46,10 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('@/views/dashboard/DocumentOverview.vue')
       },
       {
+        path: 'account',
+        component: () => import('@/views/dashboard/AccountSettings.vue')
+      },
+      {
         path: 'editor/:id',
         name: 'Editor',
         component: () => import('@/views/dashboard/DocumentEditor.vue'),
