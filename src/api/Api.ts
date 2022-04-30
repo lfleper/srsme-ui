@@ -1,6 +1,6 @@
 import { TokenService } from "@/services/TokenService"
 
-const baseUrl = 'http://localhost:8080'
+export const baseUrl = 'http://localhost:8080'
 
 export default async function fetcher<TResult>(method: string, url: string, data?: unknown): Promise<Response<TResult>> {
     const tokenService = new TokenService()
@@ -43,6 +43,14 @@ export default async function fetcher<TResult>(method: string, url: string, data
     } as Response<TResult>
 }
 
+export function getTokenHeader(): string {
+    const tokenService = new TokenService()
+    const token = tokenService.getToken()
+    if (!token) {
+        throw new Error('No token')
+    }
+    return token.tokenType + ' ' + token.jwtToken
+}
 
 export interface Response<TResult> {
     ok: boolean,

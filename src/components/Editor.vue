@@ -89,8 +89,12 @@
             >
                 <el-row :span="24" justify="center">
                     <el-upload
+                        :action="uploadImageBaseUrl"
+                        :headers="uploadImageHeader"
+                        :on-success="handleUploadImageSuccess"
+                        :on-error="handleUploadImageError"
                         drag
-                        action="https://jsonplaceholder.typicode.com/posts/"
+                        ref="elUploadInstance"
                     >
                         <el-icon class="el-icon--upload"><UploadFilled/></el-icon>
                         <div class="el-upload__text">
@@ -106,6 +110,7 @@
 <script setup lang="ts">
 import { EditorContent, Editor } from '@tiptap/vue-3'
 import { Collaboration } from "@tiptap/extension-collaboration"
+import { Image } from "@tiptap/extension-image"
 import StarterKit from "@tiptap/starter-kit"
 import * as Y from "yjs"
 import {
@@ -120,8 +125,9 @@ import {
     ElNotification,
     ElDialog,
     ElUpload,
-    ElIcon
+    ElIcon,
 } from 'element-plus'
+import type { UploadInstance, UploadFile } from 'element-plus'
 import { ArrowLeft, ArrowRight, SemiSelect, Picture, UploadFilled } from '@element-plus/icons-vue'
 import { onMounted, onUnmounted, reactive, ref } from 'vue'
 import { header_options } from '@/util/EditorUtil'
@@ -130,9 +136,13 @@ import { Chapter, FlatDocument } from '@/types'
 import { ChapterService } from '@/services/ChapterService'
 import { DocumentService } from '@/services/DocumentService'
 import store from '@/store'
+import { baseUrl, getTokenHeader } from '@/api/Api'
 
 const documentService = new DocumentService()
 const chapterService = new ChapterService()
+let uploadImageBaseUrl = ref('')
+let uploadImageHeader = reactive<Headers>(new Headers())
+const elUploadInstance = ref<UploadInstance>()
 const route = useRoute()
 let chapterId = ''
 let docId = ''
@@ -173,6 +183,10 @@ let editor: Editor | undefined = new Editor({
         Collaboration.configure({
             document: ydoc,
         }),
+        Image.configure({
+            inline: true,
+            allowBase64: true
+        })
     ],
     autofocus: "start"
 })
@@ -184,10 +198,21 @@ const changeHeading = () => {
     editor?.chain().focus().toggleHeading({ level: headerOption.value }).run()
 }
 const openUploadImageDialog = () => {
-    console.log('openUploadImageDialog')
     uploadImageDialogVisible.value = true
 }
 
+const handleUploadImageSuccess = (response: any, uploadFile: UploadFile) => {
+    console.log(response)
+    console.log(uploadFile)
+    elUploadInstance.value!.clearFiles()
+    uploadImageDialogVisible.value = false
+}
+const handleUploadImageError = () => {
+    ElNotification.error({
+        title: 'Error',
+        message: 'Error while uploading image'
+    })
+}
 const loadChapter = () => {
     chapterService.getChapter(docId, chapterId)
         .then(resp => {
@@ -240,6 +265,8 @@ const initEditor = () => {
     initParams()
     loadChapter()
     loadDocument()
+    uploadImageBaseUrl.value = baseUrl + '/images/' + docId
+    uploadImageHeader.set('Authorization', getTokenHeader())
 }
 
 onMounted(() => {
