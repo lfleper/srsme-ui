@@ -102,9 +102,12 @@ import { ArrowLeft, ArrowRight, SemiSelect } from '@element-plus/icons-vue'
 import { onMounted, onUnmounted, reactive, ref } from 'vue'
 import { header_options } from '@/util/EditorUtil'
 import { useRoute } from 'vue-router'
-import { Chapter } from '@/types'
+import { Chapter, FlatDocument } from '@/types'
 import { ChapterService } from '@/services/ChapterService'
+import { DocumentService } from '@/services/DocumentService'
+import store from '@/store'
 
+const documentService = new DocumentService()
 const chapterService = new ChapterService()
 const route = useRoute()
 let chapterId = ''
@@ -118,10 +121,26 @@ let chapter = reactive<Chapter>({
     description: '',
     nr: 0
 })
+let flatDocument = reactive<FlatDocument>({
+    id: '',
+    name: '',
+    owner: {
+        id: '',
+        username: '',
+        firstName: '',
+        lastName: '',
+        documentPermission: ''
+    },
+    description: '',
+    dateOfCreation: new Date(),
+    lastModified: new Date(),
+    users: []
+})
 
 const ydoc: Y.Doc = new Y.Doc()
 let editor: Editor | undefined = new Editor({
     content: '',
+    editable: false,
     extensions: [
         StarterKit.configure({
             history: false,
@@ -143,7 +162,6 @@ const changeHeading = () => {
 const loadChapter = () => {
     chapterService.getChapter(docId, chapterId)
         .then(resp => {
-            console.log(resp)
             if (!resp) {
                 throw new Error('Chapter not found')
             }
@@ -162,6 +180,29 @@ const loadChapter = () => {
             })
         })
 }
+const loadDocument = () => {
+    const user = store.state.user
+    documentService.getFlatDocument(docId)
+        .then(resp => {
+            if (!resp) {
+                throw new Error('Document not found')
+            }
+            Object.assign(flatDocument, resp)
+            if (user && (resp.users.find(u => u.id === user.id && u.documentPermission === 'READ_WRITE') ||
+                resp.owner.id === user.id)) {
+                editor?.setOptions({ editable: true })
+            } else {
+                editor?.setOptions({ editable: false })
+            }
+        })
+        .catch(err => {
+            console.error(err)
+            ElNotification.error({
+                title: 'Error',
+                message: 'Could not load document'
+            })
+        })
+}
 const initParams = () => {
     chapterId = route.params.chapterId.toString()
     docId = route.params.id.toString()
@@ -169,6 +210,7 @@ const initParams = () => {
 const initEditor = () => {
     initParams()
     loadChapter()
+    loadDocument()
 }
 
 onMounted(() => {

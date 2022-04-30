@@ -25,6 +25,7 @@ export interface DocumentFilter {
 export interface FlatDocument {
     id: string,
     name: string,
+    owner: DocumentUser,
     description: string,
     dateOfCreation: Date,
     lastModified: Date,

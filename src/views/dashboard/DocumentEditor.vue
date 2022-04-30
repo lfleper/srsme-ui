@@ -77,7 +77,6 @@ import {
 } from 'element-plus'
 import { EditPen, Delete } from '@element-plus/icons-vue'
 import { onMounted, reactive, ref } from 'vue'
-import { test_doc } from '@/test_data/Document'
 import router from '@/router'
 import { ChapterService } from '@/services/ChapterService'
 import { FlatChapter } from '@/types'
@@ -85,7 +84,6 @@ import { FlatChapter } from '@/types'
 const chapterService = new ChapterService()
 const route = useRoute()
 const docId = route.params.id.toString()
-//const doc = reactive(test_doc)
 let flatChaperts = ref<FlatChapter[]>([])
 const renameChapterDialogVisible = ref(false)
 let editChapterForm = reactive({
@@ -101,7 +99,7 @@ const editChapter = (chapterId: string, chapterName: string) => {
 const renameChapter = () => {
     console.log('rename chapter', editChapterForm)
     chapterService.updateChaperName(docId, editChapterForm.chapterId, editChapterForm.title)
-        .then(resp => {
+        .then(() => {
             ElNotification.success({
                 title: 'Success',
                 message: 'Chapter name updated successfully'
@@ -172,6 +170,7 @@ onMounted(() => {
 }
 .chapter-name {
     max-width: 200px;
+    width: 200px;
     overflow: hidden;
     text-overflow: ellipsis;
 }

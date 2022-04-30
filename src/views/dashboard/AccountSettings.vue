@@ -162,6 +162,7 @@ const save = () => {
             })
         })
         .catch(err => {
+            console.error(err)
             ElNotification.error({
                 title: 'Error',
                 message: 'Failed to update user'

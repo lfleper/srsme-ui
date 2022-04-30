@@ -15,6 +15,17 @@ export class DocumentService {
             })
     }
 
+    public async getFlatDocument(documentId: string): Promise<FlatDocument | void> {
+        return await fetcher<FlatDocument>('GET', `/document/${documentId}`)
+            .then(resp => {
+                if (!resp.data) 
+                    throw new Error (`error getting document.`)
+                resp.data.lastModified = new Date(resp.data.lastModified)
+                resp.data.dateOfCreation = new Date(resp.data.dateOfCreation)
+                return resp.data
+            })
+    }
+
     public async createDocument(name: string, description?: string): Promise<FlatDocument | void> {
         return await fetcher<FlatDocument | null>('POST', '/document', { name: name, description: description })
             .then(resp => {
