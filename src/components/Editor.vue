@@ -202,8 +202,14 @@ const openUploadImageDialog = () => {
 }
 
 const handleUploadImageSuccess = (response: any, uploadFile: UploadFile) => {
-    console.log(response)
-    console.log(uploadFile)
+    editor?.commands.setImage({
+        src: `${baseUrl}/images/${docId}/${response}`,
+        alt: uploadFile.name
+    })
+    ElNotification.success({
+        title: 'Upload Image',
+        message: `Image ${uploadFile.name} uploaded successfully`
+    })
     elUploadInstance.value!.clearFiles()
     uploadImageDialogVisible.value = false
 }
