@@ -1,6 +1,6 @@
 <template>
     <el-container>
-        <el-main>
+        <el-main v-if="editor">
             <el-row class="editor-toolbar" :span="24">
                 <el-button-group>
                     <el-button 
@@ -95,16 +95,33 @@ import {
     ElButton,
     ElSelect,
     ElOption,
-    ElDivider
+    ElDivider,
+    ElNotification
 } from 'element-plus'
 import { ArrowLeft, ArrowRight, SemiSelect } from '@element-plus/icons-vue'
-import { onUnmounted, ref } from 'vue'
+import { onMounted, onUnmounted, reactive, ref } from 'vue'
 import { header_options } from '@/util/EditorUtil'
+import { useRoute } from 'vue-router'
+import { Chapter } from '@/types'
+import { ChapterService } from '@/services/ChapterService'
+
+const chapterService = new ChapterService()
+const route = useRoute()
+let chapterId = ''
+let docId = ''
 
 let headerOption = ref()
+let chapter = reactive<Chapter>({
+    id: '',
+    name: '',
+    content: '',
+    description: '',
+    nr: 0
+})
+
 const ydoc: Y.Doc = new Y.Doc()
 let editor: Editor | undefined = new Editor({
-    content: 'bla',
+    content: '',
     extensions: [
         StarterKit.configure({
             history: false,
@@ -123,6 +140,40 @@ const changeHeading = () => {
     editor?.chain().focus().toggleHeading({ level: headerOption.value }).run()
 }
 
+const loadChapter = () => {
+    chapterService.getChapter(docId, chapterId)
+        .then(resp => {
+            console.log(resp)
+            if (!resp) {
+                throw new Error('Chapter not found')
+            }
+            chapter.id = resp.id
+            chapter.name = resp.name
+            chapter.content = resp.content
+            chapter.description = resp.description
+            chapter.nr = resp.nr
+            editor?.commands.setContent(chapter.content)
+        })
+        .catch(err => {
+            console.error(err)
+            ElNotification.error({
+                title: 'Error',
+                message: 'Could not load chapter'
+            })
+        })
+}
+const initParams = () => {
+    chapterId = route.params.chapterId.toString()
+    docId = route.params.id.toString()
+}
+const initEditor = () => {
+    initParams()
+    loadChapter()
+}
+
+onMounted(() => {
+    initEditor()
+})
 onUnmounted(() => {
     editor?.destroy()
 })

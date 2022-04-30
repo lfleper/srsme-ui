@@ -1,5 +1,5 @@
 import fetcher from "@/api/Api"
-import { FlatChapter } from "@/types"
+import { Chapter, FlatChapter } from "@/types"
 
 export class ChapterService {
     public async getFlatChapters(documentId: string): Promise<FlatChapter[] | void> {
@@ -22,6 +22,14 @@ export class ChapterService {
             .then(resp => {
                 if (!resp.data)
                     throw new Error (`error updating chapter ${chapterId}.`)
+                return resp.data
+            })
+    }
+    public async getChapter(documentId: string, chapterId: string): Promise<Chapter | void> {
+        return await fetcher<Chapter | null>('GET', `/document/${documentId}/chapters/${chapterId}`)
+            .then(resp => {
+                if (!resp.data)
+                    throw new Error (`error getting chapter ${chapterId}.`)
                 return resp.data
             })
     }

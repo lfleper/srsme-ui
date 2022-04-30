@@ -14,7 +14,7 @@
                     <template #title>
                         <span 
                             class="chapter-name" 
-                            @click="openChapter(chapter.nr)"
+                            @click="openChapter(chapter.id)"
                         >
                             {{chapter.name}}
                         </span>
@@ -39,7 +39,7 @@
         </el-aside>
 
         <el-main>
-            <router-view />
+            <router-view :key="route.path" />
         </el-main>
 
         <el-dialog v-model="renameChapterDialogVisible" title="Rename the chapter">
@@ -123,7 +123,6 @@ const renameChapter = () => {
     renameChapterDialogVisible.value = false
 }
 const deleteChapter = (chapterId: string) => {
-    console.log('delete chapter', chapterId)
     chapterService.deleteChapter(docId, chapterId)
         .then(() => {
             flatChaperts.value = flatChaperts.value.filter(c => c.id !== chapterId)
@@ -136,11 +135,11 @@ const deleteChapter = (chapterId: string) => {
             })
         })
 }
-const openChapter = (chapterNo: number) => {
+const openChapter = (chapterId: string) => {
     router.push({
         name: 'Chapter',
         params: {
-            chapterNo: chapterNo
+            chapterId: chapterId
         }
     })
 }
@@ -155,11 +154,9 @@ const loadChaptersForDocument = () => {
         .catch(err => {
             console.error(err)
         })
-    console.log('load chapters for document', docId)
 }
 
 onMounted(() => {
-    console.log(docId)
     loadChaptersForDocument()
 })
 
