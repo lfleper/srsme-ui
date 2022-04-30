@@ -26,6 +26,25 @@
             <el-divider/>
 
             <el-row>
+                <el-descriptions
+                    title="Owner"
+                    :column="3"
+                    border
+                    style="margin-top: 20px;"
+                >
+                    <el-descriptions-item label="Username">
+                        {{ doc.owner.username }}
+                    </el-descriptions-item>
+                    <el-descriptions-item label="First name">
+                        {{ doc.owner.firstName }}
+                    </el-descriptions-item>
+                    <el-descriptions-item label="Last name">
+                        {{ doc.owner.lastName }}
+                    </el-descriptions-item>
+                </el-descriptions>
+            </el-row>
+
+            <el-row>
                 <h4 class="el-drawer__header">User</h4>
                 <el-table :data="doc.users" style="width: 100%;">
                     <el-table-column prop="username" label="Username"/>
@@ -133,7 +152,9 @@ import {
     ElOption,
     ElNotification,
     ElDialog,
-    ElPopconfirm
+    ElPopconfirm,
+    ElDescriptions,
+    ElDescriptionsItem
 } from 'element-plus'
 import { Delete } from '@element-plus/icons-vue'
 
@@ -266,3 +287,16 @@ defineExpose({
 })
 
 </script>
+
+<style>
+.cell-item {
+    display: flex;
+    align-items: center;
+}
+.el-descriptions__cell {
+    font-family: 'Montserrat Alternates', sans-serif;
+}
+.el-descriptions__cell el-descriptions__label is-bordered-label {
+    font-weight: bold;
+}
+</style>
