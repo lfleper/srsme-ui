@@ -70,6 +70,10 @@
                         :icon="ArrowRight" 
                         @click="editor?.chain().focus().redo().run()"
                     />
+                    <el-button
+                        :icon="Picture"
+                        @click="openUploadImageDialog"
+                    />
                 </el-button-group>
             </el-row>
 
@@ -78,6 +82,23 @@
             <el-row class="editor-content" :span="24" @click="editor?.chain().focus()" justify="center">
                 <editor-content :editor="editor"></editor-content>
             </el-row>
+
+            <el-dialog
+                v-model="uploadImageDialogVisible"
+                title="Upload Image"
+            >
+                <el-row :span="24" justify="center">
+                    <el-upload
+                        drag
+                        action="https://jsonplaceholder.typicode.com/posts/"
+                    >
+                        <el-icon class="el-icon--upload"><UploadFilled/></el-icon>
+                        <div class="el-upload__text">
+                            Drop file here or <em>click to upload</em>
+                        </div>
+                    </el-upload>
+                </el-row>
+            </el-dialog>
         </el-main>
     </el-container>
 </template>
@@ -96,9 +117,12 @@ import {
     ElSelect,
     ElOption,
     ElDivider,
-    ElNotification
+    ElNotification,
+    ElDialog,
+    ElUpload,
+    ElIcon
 } from 'element-plus'
-import { ArrowLeft, ArrowRight, SemiSelect } from '@element-plus/icons-vue'
+import { ArrowLeft, ArrowRight, SemiSelect, Picture, UploadFilled } from '@element-plus/icons-vue'
 import { onMounted, onUnmounted, reactive, ref } from 'vue'
 import { header_options } from '@/util/EditorUtil'
 import { useRoute } from 'vue-router'
@@ -113,6 +137,7 @@ const route = useRoute()
 let chapterId = ''
 let docId = ''
 
+const uploadImageDialogVisible = ref(false)
 let headerOption = ref()
 let chapter = reactive<Chapter>({
     id: '',
@@ -157,6 +182,10 @@ const changeHeading = () => {
         editor?.chain().focus().toggleHeading({ level: editor?.getAttributes('heading')?.level }).run()
     }
     editor?.chain().focus().toggleHeading({ level: headerOption.value }).run()
+}
+const openUploadImageDialog = () => {
+    console.log('openUploadImageDialog')
+    uploadImageDialogVisible.value = true
 }
 
 const loadChapter = () => {
