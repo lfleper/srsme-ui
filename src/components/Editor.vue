@@ -3,6 +3,9 @@
         <el-main v-if="editor">
             <el-row class="editor-toolbar" :span="24">
                 <el-button-group>
+                    <el-button type="primary" @click="saveDocument">
+                        Save
+                    </el-button>
                     <el-button 
                         @click="editor?.chain().focus().toggleBold().run()" 
                         :type="editor?.isActive('bold') ? 'primary' : ''"
@@ -201,7 +204,7 @@ const openUploadImageDialog = () => {
     uploadImageDialogVisible.value = true
 }
 
-const handleUploadImageSuccess = (response: any, uploadFile: UploadFile) => {
+const handleUploadImageSuccess = (response: any, uploadFile: UploadFile): void => {
     editor?.commands.setImage({
         src: `${baseUrl}/images/${docId}/${response}`,
         alt: uploadFile.name
@@ -274,6 +277,23 @@ const initEditor = () => {
     uploadImageBaseUrl.value = baseUrl + '/images/' + docId
     uploadImageHeader.set('Authorization', getTokenHeader())
 }
+const saveDocument = () => {
+    console.log('save document')
+    chapterService.saveChapterContent(docId, chapterId, editor?.getHTML())
+        .then(resp => {
+            ElNotification.success({
+                title: 'Save Chapter',
+                message: 'Chapter saved successfully'
+            })
+        })
+        .catch(err => {
+            console.error(err)
+            ElNotification.error({
+                title: 'Error',
+                message: 'Could not save chapter'
+            })
+        })
+}
 
 onMounted(() => {
     initEditor()
@@ -338,7 +358,7 @@ onUnmounted(() => {
 }
 .ProseMirror-focused {
     outline: none;
-    width: 700px !important;
+    min-width: 700px !important;
 }
 .ProseMirror {
     font-size: 1rem;
@@ -349,6 +369,7 @@ onUnmounted(() => {
     border-radius: 0.5rem;
     box-shadow: 0 0 0 1px rgba(13, 13, 13, 0.1);
     padding: 1rem;
-    width: 790px !important;
+    min-width: 790px !important;
+    width: 900px !important;
 }
 </style>

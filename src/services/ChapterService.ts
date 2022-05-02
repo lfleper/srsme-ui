@@ -33,4 +33,16 @@ export class ChapterService {
                 return resp.data
             })
     }
+
+    public async saveChapterContent(documentId: string, chapterId: string, content: string | undefined): Promise<FlatChapter | void> {
+        if (!content)
+            content = ''
+        console.log(content)
+        return await fetcher<void>('PUT', `/document/${documentId}/chapters/${chapterId}`, content as string)
+            .then(resp => {
+                if (!resp.ok)
+                    throw new Error (`error saving chapter ${chapterId}.`)
+                return resp.data
+            })
+    }
 }
