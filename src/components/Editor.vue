@@ -29,12 +29,6 @@
                         clearable
                     >
                         <el-option
-                            v-if="headerOption"
-                            :key="0"
-                            label="Normal"
-                            :value="0"
-                        />
-                        <el-option
                             v-for="type in header_options"
                             :key="type.value"
                             :label="type.label"
@@ -132,7 +126,7 @@ import {
 } from 'element-plus'
 import type { UploadInstance, UploadFile } from 'element-plus'
 import { ArrowLeft, ArrowRight, SemiSelect, Picture, UploadFilled } from '@element-plus/icons-vue'
-import { onMounted, onUnmounted, reactive, ref } from 'vue'
+import { onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import { header_options } from '@/util/EditorUtil'
 import { useRoute } from 'vue-router'
 import { Chapter, FlatDocument } from '@/types'
@@ -140,6 +134,7 @@ import { ChapterService } from '@/services/ChapterService'
 import { DocumentService } from '@/services/DocumentService'
 import store from '@/store'
 import { baseUrl, getTokenHeader } from '@/api/Api'
+import { Level } from '@tiptap/extension-heading'
 
 const documentService = new DocumentService()
 const chapterService = new ChapterService()
@@ -151,7 +146,7 @@ let chapterId = ''
 let docId = ''
 
 const uploadImageDialogVisible = ref(false)
-let headerOption = ref()
+let headerOption = ref(0)
 let chapter = reactive<Chapter>({
     id: '',
     name: '',
@@ -194,17 +189,27 @@ let editor: Editor | undefined = new Editor({
     autofocus: "start"
 })
 
+watch(() => editor?.getAttributes('heading')?.level, (selection, prevSelection) => {
+    let isActive = editor?.isActive('heading')
+    if (selection !== prevSelection && isActive) {
+        headerOption.value = editor?.getAttributes('heading')?.level
+    } else {
+        headerOption.value = 0
+    }
+}) 
+
 const changeHeading = () => {
     if (headerOption.value === 0) {
         editor?.chain().focus().toggleHeading({ level: editor?.getAttributes('heading')?.level }).run()
+    } else {
+        editor?.chain().focus().toggleHeading({ level: headerOption.value as Level }).run()
     }
-    editor?.chain().focus().toggleHeading({ level: headerOption.value }).run()
 }
 const openUploadImageDialog = () => {
     uploadImageDialogVisible.value = true
 }
 
-const handleUploadImageSuccess = (response: any, uploadFile: UploadFile): void => {
+const handleUploadImageSuccess = (response: unknown, uploadFile: UploadFile): void => {
     editor?.commands.setImage({
         src: `${baseUrl}/images/${docId}/${response}`,
         alt: uploadFile.name
@@ -280,7 +285,7 @@ const initEditor = () => {
 const saveDocument = () => {
     console.log('save document')
     chapterService.saveChapterContent(docId, chapterId, editor?.getHTML())
-        .then(resp => {
+        .then(() => {
             ElNotification.success({
                 title: 'Save Chapter',
                 message: 'Chapter saved successfully'

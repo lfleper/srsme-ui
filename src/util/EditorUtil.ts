@@ -4,6 +4,10 @@
  */
 export const header_options = [
     {
+        label: 'Normal',
+        value: 0
+    },
+    {
         label: 'Heading 1',
         value: 1
     },
