@@ -35,10 +35,12 @@ import {
     ElDrawer,
     ElButton,
     ElSelect,
-    ElOption
+    ElOption,
+    ElNotification
 } from 'element-plus'
 import { FlatDocument } from '@/types'
 import { ref, toRefs, defineExpose, defineProps, reactive } from 'vue'
+import { ExportService } from '@/services/ExportService'
 
 const props = defineProps<{
     doc: FlatDocument
@@ -62,8 +64,42 @@ const exportOptions = reactive([
 const exportOption = ref('')
 
 const open = () => exportDocumentDrawerVisible.value = true
-const exportDocument = () => {
+const fileDownload = (documentType: string, name: string, content: string) => {
+    const blob = new Blob([content], { type: documentType })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = name
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+}
+const exportDocument = async () => {
     console.log('export as ' + exportOption.value)
+    try {
+        const exportService = new ExportService()
+        await exportService.loadDocument(doc.value.id)
+
+        switch (exportOption.value) {
+            case 'pdf':
+                console.log('ToDo')
+                break
+            case 'json':
+                fileDownload('application/json', doc.value.name + '.json', JSON.stringify(exportService.getJson()))
+                break
+            case 'html':
+                fileDownload('text/html', doc.value.name + '.html', exportService.getHtml())
+                break
+            default:
+                throw new Error('Unknown export option')
+        }
+    } catch (err) {
+        console.error(err)
+        ElNotification.error({
+            title: 'Error export document',
+            message: 'Cannot export document as ' + exportOption.value
+        })
+    }
     exportDocumentDrawerVisible.value = false
 }
 
