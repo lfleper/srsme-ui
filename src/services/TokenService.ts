@@ -19,7 +19,9 @@ export class TokenService {
 
     public setToken(token: Token): void {
         const cookieManager = useCookies()
-        cookieManager.cookies.set(this.TOKEN_COOKIE_NAME, JSON.stringify(token), token.expiresIn)
+        const expiresDate = new Date()
+        expiresDate.setSeconds(expiresDate.getSeconds() + token.expiresIn / 1000)
+        cookieManager.cookies.set(this.TOKEN_COOKIE_NAME, JSON.stringify(token), expiresDate)
     }
 
     public removeToken(): void {

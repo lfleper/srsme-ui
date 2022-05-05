@@ -16,7 +16,7 @@
                             class="chapter-name" 
                             @click="openChapter(chapter.id)"
                         >
-                            {{chapter.name}}
+                            {{chapter.nr}}.  {{chapter.name}}
                         </span>
                         <div class="menu-btn-grp">
                             <el-icon @click="editChapter(chapter.id, chapter.name)"><EditPen/></el-icon>
