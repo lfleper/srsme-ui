@@ -41,6 +41,7 @@ import {
 import { FlatDocument } from '@/types'
 import { ref, toRefs, defineExpose, defineProps, reactive } from 'vue'
 import { ExportService } from '@/services/ExportService'
+import { DocumentService } from '@/services/DocumentService'
 
 const props = defineProps<{
     doc: FlatDocument
@@ -78,16 +79,17 @@ const exportDocument = async () => {
     console.log('export as ' + exportOption.value)
     try {
         const exportService = new ExportService()
-        await exportService.loadDocument(doc.value.id)
-
         switch (exportOption.value) {
             case 'pdf':
-                console.log('ToDo')
+                var documentService = new DocumentService()
+                documentService.getPdf(doc.value.id)
                 break
             case 'json':
+                await exportService.loadDocument(doc.value.id)
                 fileDownload('application/json', doc.value.name + '.json', JSON.stringify(exportService.getJson()))
                 break
             case 'html':
+                await exportService.loadDocument(doc.value.id)
                 fileDownload('text/html', doc.value.name + '.html', exportService.getHtml())
                 break
             default:
