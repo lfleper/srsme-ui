@@ -1,5 +1,6 @@
-import fetcher from "@/api/Api"
+import fetcher, { baseUrl } from "@/api/Api"
 import { AddUserToDocumentDto, DocumentUser, FlatDocument } from "@/types"
+import { TokenService } from "./TokenService"
 
 export class DocumentService {
     public async getFlatDocuments(): Promise<FlatDocument[] | void> {
@@ -78,6 +79,26 @@ export class DocumentService {
                 if (!resp.ok) 
                     throw new Error (`error updating document name.`)
                 return resp.data
+            })
+    }
+
+    public getPdf(documentId: string): void {
+        const token = new TokenService().getToken()
+        const header = new Headers()
+        if (token) {
+            header.append('Authorization', token.tokenType + ' ' + token.jwtToken)
+        }
+        header.append("Content-Type", "application/json");
+        const requestOptions = {
+            method: 'GET',
+            headers: header
+        }
+        fetch(`${baseUrl}/document/${documentId}/pdf`, requestOptions)
+            .then(resp => resp.blob())
+            .then(blob => {
+                const file = new Blob([blob], {type: 'application/pdf'})
+                const fileUrl = URL.createObjectURL(file)
+                window.open(fileUrl)
             })
     }
 }
