@@ -38,10 +38,10 @@
                         size="large"
                     >
                         <el-form-item label="username" prop="username">
-                            <el-input placeholder="username" v-model="form.username" clearable/>
+                            <el-input placeholder="username" @keyup.enter="login" v-model="form.username" clearable/>
                         </el-form-item>
                         <el-form-item label="password" prop="password">
-                            <el-input placeholder="password" v-model="form.password" type="password" show-password/>
+                            <el-input placeholder="password" @keyup.enter="login" v-model="form.password" type="password" show-password/>
                         </el-form-item>
 
                         <el-row justify="center">

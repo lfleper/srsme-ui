@@ -38,23 +38,23 @@
                         size="large"
                     >
                         <el-form-item label="username" prop="username">
-                            <el-input placeholder="username" v-model="form.username" clearable/>
+                            <el-input placeholder="username" @keyup.enter="signIn" v-model="form.username" clearable/>
                         </el-form-item>
 
                         <el-form-item label="first name" prop="firstName">
-                            <el-input placeholder="first name" v-model="form.firstName" clearable/>
+                            <el-input placeholder="first name" @keyup.enter="signIn" v-model="form.firstName" clearable/>
                         </el-form-item>
 
                         <el-form-item label="last name" prop="lastName">
-                            <el-input placeholder="last name" v-model="form.lastName" clearable/>
+                            <el-input placeholder="last name" @keyup.enter="signIn" v-model="form.lastName" clearable/>
                         </el-form-item>
 
                         <el-form-item label="e-mail" prop="email">
-                            <el-input placeholder="e-mail" v-model="form.email" clearable></el-input>
+                            <el-input placeholder="e-mail" @keyup.enter="signIn" v-model="form.email" clearable></el-input>
                         </el-form-item>
 
                         <el-form-item label="password" prop="password">
-                            <el-input placeholder="password" v-model="form.password" type="password" show-password/>
+                            <el-input placeholder="password" @keyup.enter="signIn" v-model="form.password" type="password" show-password/>
                         </el-form-item>
 
                         <el-row justify="center">
