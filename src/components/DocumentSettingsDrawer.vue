@@ -249,7 +249,8 @@ const addUserToDocument = () => {
         })
         return
     }
-    if (doc.value.users.find(user => user.username === newDocumentUser.username)) {
+    if (doc.value.users.find(user => user.username === newDocumentUser.username) ||
+        doc.value.owner.username === newDocumentUser.username) {
         ElNotification.error({
             title: 'Cannot add user',
             message: 'User already exists'
