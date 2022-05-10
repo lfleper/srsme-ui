@@ -104,13 +104,14 @@
             <el-form-item
                 label="Username"
             >
-                <el-input v-model="newDocumentUser.username" autocomplete="off" />
+                <el-input @keyup.enter="addUserToDocument" v-model="newDocumentUser.username" autocomplete="off" />
             </el-form-item>
             <el-form-item
                 label="Permission"
             >
                 <el-select
                     v-model="newDocumentUser.documentPermission"
+                    @keyup.enter="addUserToDocument"
                     size="small"
                 >
                     <el-option
