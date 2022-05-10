@@ -48,7 +48,7 @@
         >
             <el-form label-position="top">
                 <el-form-item label="Document Name:">
-                    <el-input v-model="newDocumentName" placeholder="Enter name" autocomplete="off" clearable/> 
+                    <el-input v-model="newDocumentName" @keyup.enter="createNewDocument" placeholder="Enter name" autocomplete="off" clearable/> 
                 </el-form-item>
 
                 <!-- Unnecessary input field! Needed to work around a Vue bug. A single input field leads to reload of the page on enter. -->
