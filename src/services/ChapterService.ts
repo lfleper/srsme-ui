@@ -56,4 +56,12 @@ export class ChapterService {
                 return resp.data
             })
     }
+    public async updateChapterNr(documentId: string, flatChapter: FlatChapter[]): Promise<FlatChapter[] | void> {
+        return await fetcher<FlatChapter[] | null>('PUT', `/document/${documentId}/flatChapters`, flatChapter)
+            .then(resp => {
+                if (!resp.data)
+                    throw new Error (`error updating chapter.`)
+                return resp.data
+            })
+    }
 }

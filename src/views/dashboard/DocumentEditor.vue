@@ -249,6 +249,14 @@ const drop = (event: DragEvent) => {
         if (target) {
             const targetId = (target as HTMLElement).dataset.id ?? '';
             sortChapters(chapterId, targetId)
+            // update chapters
+            chapterService.updateChapterNr(docId, flatChaperts.value)
+                .catch(err => {
+                    ElNotification.error({
+                        title: 'Error',
+                        message: 'Something went wrong while updating the chapter'
+                    })
+                })
         }
     }
 }
