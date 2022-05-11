@@ -281,9 +281,9 @@ const initEditor = () => {
     loadDocument()
     uploadImageBaseUrl.value = baseUrl + '/images/' + docId
     uploadImageHeader.set('Authorization', getTokenHeader())
+    editor?.chain().focus()
 }
 const saveDocument = () => {
-    console.log('save document')
     chapterService.saveChapterContent(docId, chapterId, editor?.getHTML())
         .then(() => {
             ElNotification.success({

@@ -252,6 +252,7 @@ const drop = (event: DragEvent) => {
             // update chapters
             chapterService.updateChapterNr(docId, flatChaperts.value)
                 .catch(err => {
+                    console.error(err)
                     ElNotification.error({
                         title: 'Error',
                         message: 'Something went wrong while updating the chapter'
