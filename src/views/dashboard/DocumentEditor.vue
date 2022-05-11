@@ -1,15 +1,24 @@
 <template>
     <el-container>
         <el-aside class="editor-toolbar editor-item">
-            <h4 class="el-drawer__header">Chapters</h4>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h4 class="el-drawer__header">Chapters</h4>
+                <el-button :icon="Plus"></el-button>
+            </div>
             <el-menu
                 class="el-menu-vertical-demo"
                 mode="vertical"
+                @dragover="dragover"
+                @drop="drop"
             >
                 <el-menu-item
                     v-for="chapter in flatChaperts"
                     :key="chapter.nr"
                     :index="chapter.nr.toString()"
+                    :data-id="chapter.id"
+                    draggable="true"
+                    @dragstart="dragStart($event)"
+                    @dragend="dragEnd"
                 >
                     <template #title>
                         <span 
@@ -55,7 +64,6 @@
                 </span>
             </template>
         </el-dialog>
-
     </el-container>
 </template>
 
@@ -73,9 +81,10 @@ import {
     ElForm,
     ElInput,
     ElFormItem,
-    ElNotification
+    ElNotification,
+    ElButton,
 } from 'element-plus'
-import { EditPen, Delete } from '@element-plus/icons-vue'
+import { EditPen, Delete, Plus } from '@element-plus/icons-vue'
 import { onMounted, reactive, ref } from 'vue'
 import router from '@/router'
 import { ChapterService } from '@/services/ChapterService'
@@ -153,6 +162,62 @@ const loadChaptersForDocument = () => {
             console.error(err)
         })
 }
+const dragStart = (event: DragEvent) => {
+    if (event.dataTransfer && event.target && event.currentTarget) {
+        event.dataTransfer.dropEffect = 'move'
+        event.dataTransfer.setData('text/plain', (event.target as HTMLElement).dataset.id ?? '');
+        (event.currentTarget as HTMLElement).classList.add('dragging')
+    }
+
+}
+const dragEnd = (event: DragEvent) => {
+    if (event.currentTarget && event.dataTransfer) {
+        (event.currentTarget as HTMLElement).classList.remove('dragging')
+    }
+}
+const dragover = (event: DragEvent) => {
+    if (event.dataTransfer) {
+        event.preventDefault()
+        event.dataTransfer.dropEffect = 'move'
+    }
+}
+const sortChapters = (sourceChapterId: string, targetChapterId: string) => {
+    flatChaperts.value.map(chapter => {
+        if (chapter.id === sourceChapterId) {
+            chapter.nr = flatChaperts.value.find(c => c.id === targetChapterId)?.nr ?? 0
+        } 
+    })
+    flatChaperts.value.sort((a, b) => {
+        if (a.nr == b.nr) {
+            if (a.id === sourceChapterId) {
+                return 1
+            } else if (b.id === sourceChapterId) {
+                return 1
+            }
+        }
+        if (a.nr < b.nr) {
+            return -1
+        } else if (a.nr > b.nr) {
+            return 1
+        } else {
+            return 0
+        }
+    })
+    for (let i = 0; i < flatChaperts.value.length; i++) {
+        flatChaperts.value[i].nr = i + 1
+    }
+}
+const drop = (event: DragEvent) => {
+    event.preventDefault()
+    const chapterId = event.dataTransfer?.getData('text/plain') ?? '';
+    if ((event.target as HTMLElement).offsetParent) {
+        const target = (event.target as HTMLElement).offsetParent ?? '';
+        if (target) {
+            const targetId = (target as HTMLElement).dataset.id ?? '';
+            sortChapters(chapterId, targetId)
+        }
+    }
+}
 
 onMounted(() => {
     loadChaptersForDocument()
@@ -173,5 +238,8 @@ onMounted(() => {
     width: 200px;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+.dragging {
+    opacity: 0.5;
 }
 </style>
