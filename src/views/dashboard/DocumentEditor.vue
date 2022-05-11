@@ -3,7 +3,7 @@
         <el-aside class="editor-toolbar editor-item">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <h4 class="el-drawer__header">Chapters</h4>
-                <el-button :icon="Plus"></el-button>
+                <el-button :icon="Plus" @click="addChapterDialogVisible = true"></el-button>
             </div>
             <el-menu
                 class="el-menu-vertical-demo"
@@ -64,6 +64,20 @@
                 </span>
             </template>
         </el-dialog>
+
+        <el-dialog v-model="addChapterDialogVisible" title="Add Chapter">
+            <el-form :model="addChapterForm">
+                <el-form-item label="Chapter Name:">
+                    <el-input v-model="addChapterForm.title" autocomplete="off" clearable/>
+                </el-form-item>
+            </el-form>
+            <template #footer>
+                <span class="dialog-footer">
+                    <el-button @click="addChapterDialogVisible = false">Cancel</el-button>
+                    <el-button type="primary" @click="addChapter">Add</el-button>
+                </span>
+            </template>
+        </el-dialog>
     </el-container>
 </template>
 
@@ -95,9 +109,13 @@ const route = useRoute()
 const docId = route.params.id.toString()
 let flatChaperts = ref<FlatChapter[]>([])
 const renameChapterDialogVisible = ref(false)
+const addChapterDialogVisible = ref(false)
 let editChapterForm = reactive({
     title: '',
     chapterId: ''
+})
+let addChapterForm = reactive({
+    title: ''
 })
 
 const editChapter = (chapterId: string, chapterName: string) => {
@@ -161,6 +179,22 @@ const loadChaptersForDocument = () => {
         .catch(err => {
             console.error(err)
         })
+}
+const addChapter = () => {
+    chapterService.createChapter(docId, addChapterForm.title, flatChaperts.value.length + 1)
+        .then(resp => {
+            if (resp)
+                flatChaperts.value.push(resp)
+        })
+        .catch(err => {
+            console.error(err)
+            ElNotification.error({
+                title: 'Error',
+                message: 'Something went wrong while creating the chapter'   
+            })
+        })
+
+    addChapterDialogVisible.value = false
 }
 const dragStart = (event: DragEvent) => {
     if (event.dataTransfer && event.target && event.currentTarget) {
