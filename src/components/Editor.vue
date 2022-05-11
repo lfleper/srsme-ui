@@ -3,28 +3,36 @@
         <el-main v-if="editor">
             <el-row class="editor-toolbar" :span="24">
                 <el-button-group>
-                    <el-button type="primary" @click="saveDocument">
+                    <el-button 
+                        type="primary" 
+                        @click="saveDocument"
+                        :disabled="userHasPermission()"
+                    >
                         Save
                     </el-button>
                     <el-button 
                         @click="editor?.chain().focus().toggleBold().run()" 
+                        :disabled="userHasPermission()"
                         :type="editor?.isActive('bold') ? 'primary' : ''"
                     >
                         B
                     </el-button>
                     <el-button 
                         @click="editor?.chain().focus().toggleItalic().run()" 
+                        :disabled="userHasPermission()"
                         :type="editor?.isActive('italic') ? 'primary' : ''"
                     >
                         I
                     </el-button>
                     <el-button 
                         :icon="SemiSelect" 
+                        :disabled="userHasPermission()"
                         @click="editor?.chain().focus().toggleStrike().run()" 
                         :type="editor?.isActive('strike') ? 'primary' : ''" 
                     />
                     <el-select 
                         v-model="headerOption"
+                        :disabled="userHasPermission()"
                         @change="changeHeading"
                         clearable
                     >
@@ -37,38 +45,45 @@
                     </el-select>
                     <el-button 
                         @click="editor?.chain().focus().toggleBulletList().run()" 
+                        :disabled="userHasPermission()"
                         :type="editor?.isActive('bulletList') ? 'primary' : ''"
                     >
                         UL
                     </el-button>
                     <el-button 
                         @click="editor?.chain().focus().toggleOrderedList().run()" 
+                        :disabled="userHasPermission()"
                         :type="editor?.isActive('orderedList') ? 'primary' : ''"
                     >
                         OL
                     </el-button>
                     <el-button 
                         @click="editor?.chain().focus().toggleCode().run()" 
+                        :disabled="userHasPermission()"
                         :type="editor?.isActive('code') ? 'primary' : ''"
                     >
                         &#060;&#062;
                     </el-button>
                     <el-button 
                         @click="editor?.chain().focus().toggleCodeBlock().run()" 
+                        :disabled="userHasPermission()"
                         :type="editor?.isActive('codeBlock') ? 'primary' : ''"
                     >
                         &#060;B&#062;
                     </el-button>
                     <el-button 
                         :icon="ArrowLeft" 
+                        :disabled="userHasPermission()"
                         @click="editor?.chain().focus().undo().run()"
                     />
                     <el-button 
                         :icon="ArrowRight" 
+                        :disabled="userHasPermission()"
                         @click="editor?.chain().focus().redo().run()"
                     />
                     <el-button
                         :icon="Picture"
+                        :disabled="userHasPermission()"
                         @click="openUploadImageDialog"
                     />
                 </el-button-group>
@@ -247,6 +262,20 @@ const loadChapter = () => {
                 message: 'Could not load chapter'
             })
         })
+}
+const userHasPermission = (): boolean => {
+    const user = store.state.user
+    if (!user) {
+        return true
+    }
+    if (flatDocument.owner.id === user.id) {
+        return false
+    }
+    if (flatDocument.users.find(u => u.id === user.id && u.documentPermission === 'READ_WRITE')) {
+        return false
+    } else {
+        return true
+    }
 }
 const loadDocument = () => {
     const user = store.state.user
